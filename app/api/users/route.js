@@ -1,9 +1,14 @@
-import { getUsers, createUser, deleteUser, updateUser } from "@/controllers/userController";
+import { NextResponse } from "next/server";
+import { getUsers, createUser } from "@/services/userService";
 
-export const GET = getUsers;
+export async function GET(req) {
+    const users = await getUsers();
+    return NextResponse.json(users, { status: 200 });
+}
 
-export const POST = createUser;
+export async function POST(req) {
+    const body = await req.json();
+    const user = await createUser(body);
+    return NextResponse.json(user, { status : 201 });
+}
 
-export const DELETE = deleteUser;
-
-export const PUT = updateUser;

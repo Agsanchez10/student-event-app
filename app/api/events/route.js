@@ -1,9 +1,14 @@
-import { getEvents, createEvent, deleteEvent, updateEvent } from "@/controllers/eventController";
+import { NextResponse } from "next/server";
+import { getEvents, createEvent } from "@/services/eventService";
 
-export const GET = getEvents;
+export async function GET(req) {
+    const events = await getEvents();
+    return NextResponse.json(events, { status: 200 });
+}
 
-export const POST = createEvent;
+export async function POST(req) {
+    const body = await req.json();
+    const event = await createEvent(body);
+    return NextResponse.json(event, { status : 201 });
+}
 
-export const DELETE = deleteEvent;
-
-export const PUT = updateEvent;

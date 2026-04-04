@@ -1,9 +1,69 @@
 "use client";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function Navbar() {
   const [showLogin, setShowLogin] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, SetError] = useState(null);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const router = useRouter();
+
+
+  //read cookie to check if user is logged in
+  useEffect(() => {
+    fetch("/api/auth/check")
+      .then((res) => res.ok ? setIsLoggedIn(true) : setIsLoggedIn(false))
+      .catch(() => setIsLoggedIn(false));
+  }, []);
+
+  // Handle login form submission
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setIsLoading(true);
+    try{  
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+      
+      if (!res.ok) {
+        const errorData = await res.json();
+        SetError(`Login failed: ${errorData.error}`);
+        return;
+      } 
+      
+      setIsLoggedIn(true);
+      setShowLogin(false);
+      router.push("/dashboard");      
+
+    } catch (error) {
+      console.error("Login error:", error);
+      SetError("An error occurred during login.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      const res = await fetch("/api/auth/logout", { method: "POST" });
+      if (res.ok) {
+        setIsLoggedIn(false);
+        router.push("/");
+      } else {
+        console.error("Logout failed");
+      }
+    } catch (error) {
+      console.error("Logout error:", error);
+    }
+  };
+
+  
   return (
     <nav className="text-left">      
       <div className="flex items-center justify-between p-4 mr-15" >
@@ -25,8 +85,12 @@ export default function Navbar() {
           </li>
           |
           <li className="login-link">
-            <button onClick={() => setShowLogin(true)} className="nav-link">Login</button>
-            {showLogin && <div> </div>}
+            {isLoggedIn ? (
+              <button onClick={handleLogout} label="logout-button" className="nav-link">Logout</button>
+            ) : (
+              <button onClick={() => setShowLogin(true)} label="login-button" className="nav-link">Login</button>
+            )}            
+            
           </li>
         </ul>
       </div>
@@ -35,9 +99,10 @@ export default function Navbar() {
 <div className="border-t border-gray-300 dark:border-gray-700">
       {/* Login Modal */}
       {showLogin && (
-        <div onClick={() => setShowLogin(false)} className="fixed inset-0 z-50 flex items-center justify-center  backdrop-blur">
+        <div  className="fixed inset-0 z-50 flex items-center justify-center  backdrop-blur">
           <div className="bg-white  p-8 rounded-lg w-full max-w-md shadow-lg relative">
             <button
+              type="button"
               onClick={() => setShowLogin(false)}
               className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
             >
@@ -47,18 +112,33 @@ export default function Navbar() {
             <h2 className="text-2xl font-bold mb-6 text-center">
               Login to Your Account
             </h2>
-              <form className="space-y-6">
+              <form onSubmit={handleLogin} className="space-y-6">
                   <div>
-                      <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                        Email Address
-                      </label>
-                      <input type="email" id="email" className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" placeholder="EMAIL" required />
-                  </div>
+                    <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+                      Email Address
+                    </label>
+                    <input
+                      type="email"
+                      id="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#e12b53] focus:border-[#e12b53]"
+                      placeholder="EMAIL"
+                      required
+                    />
+                </div>
                   <div>
                       <label htmlFor="password" className="block text-sm font-medium text-gray-700">
                         Password
                       </label>
-                      <input type="password" id="password" className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" placeholder="********" required />
+                      <input 
+                        type="password" 
+                        id="password" 
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#e12b53] focus:border-[#e12b53]" 
+                        placeholder="********" 
+                        required />
                   </div>
                   <div className="flex items-center justify-between">
                       <div className="flex items-center">
@@ -74,7 +154,16 @@ export default function Navbar() {
                       </div>
                   </div>
                   <div>
-                      <button type="submit" className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#e12b53] hover:bg-[#c91f4a] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#e12b53]">Sign In</button>
+
+                      <button type="submit" 
+                        className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#e12b53] hover:bg-[#c91f4a] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#e12b53]"                        
+                        disabled={isLoading}
+                        >
+                          {isLoading ? "Signing In..." : "Sign In"}
+                        </button>
+                   </div>
+                   <div className="text-sm text-center">
+                     {error && <p className="text-red-500">{error}</p>}
                    </div>
                 </form>
             </div>
