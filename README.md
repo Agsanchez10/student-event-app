@@ -106,41 +106,6 @@ lib/
 └── mongodb.js              # MongoDB connection utility
 ```
 
-## Getting Started
-
-### Prerequisites
-- Node.js 18+ 
-- MongoDB instance (local or MongoDB Atlas)
-- npm or yarn package manager
-
-### Installation
-
-1. Clone the repository
-```bash
-git clone <repository-url>
-cd student-event-app
-```
-
-2. Install dependencies
-```bash
-npm install
-```
-
-3. Set up environment variables
-Create a `.env.local` file:
-```
-MONGODB_URI=your_mongodb_connection_string
-JWT_SECRET=your_jwt_secret_key
-NODE_ENV=development
-```
-
-4. Run the development server
-```bash
-npm run dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) in your browser.
-
 ## Key API Endpoints
 
 ### Authentication
