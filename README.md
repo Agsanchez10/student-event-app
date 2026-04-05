@@ -84,11 +84,14 @@ app/
 │   ├── pending-charters/   # Charter approval queue
 │   ├── new-club-charters/  # New charter applications
 │   └── flags/              # Flagged content review
-├── events/                  # Public events page
-├── clubs/                   # Club detail pages
-├── testing/                 # Testing dashboard with all links
-└── components/              # Reusable UI components
-models/                      # Mongoose schemas
+├── public/                 # Public facing pages
+|   ├── events/             # Public events page
+│   ├── about/              # About page
+│   └── contact/            # Contact page
+├── clubs/                  # Club detail pages
+├── testing/                # Testing dashboard with all links
+└── components/             # Reusable UI components
+models/                     # Mongoose schemas
 ├── User.js                 # User with role discriminators
 ├── Club.js
 ├── Event.js
@@ -255,7 +258,6 @@ Access the testing dashboard at `/testing` to quickly navigate to all pages and 
 - Real-time notifications for event updates
 - Email notifications for registrations
 - Announcement system for clubs
-- Enhanced search and filtering
 - Calendar view for events
-- File uploads for events and clubs
-- Social features (event sharing, comments)
+
+
