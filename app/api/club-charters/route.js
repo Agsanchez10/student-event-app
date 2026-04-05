@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import jwt from "jsonwebtoken";
-import { getClubChartersForUser, createClubCharter } from "@/services/clubCharterService";
+import { getClubChartersForUser, createClubCharter, getAllCharters } from "@/services/clubCharterService";
 import User from "@/models/User";
 import { withDB } from "@/lib/mongodb";
 
@@ -15,17 +15,24 @@ const getCurrentUser = withDB(async (token) => {
     }
 });
 
+
+// Uncomment before deployment to enable club charter functionality. This is currently disabled to prevent unauthorized access during development/testing.
+// export async function GET(req) {
+//     const cookie = req.headers.get("cookie") || "";
+//     const tokenMatch = cookie.match(/token=([^;]+)/);
+//     const token = tokenMatch ? tokenMatch[1] : null;
+//     const user = await getCurrentUser(token);
+
+//     if (!user) {
+//         return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+//     }
+
+//     const charters = await getClubChartersForUser(user._id);
+//     return NextResponse.json(charters, { status: 200 });
+// }
+
 export async function GET(req) {
-    const cookie = req.headers.get("cookie") || "";
-    const tokenMatch = cookie.match(/token=([^;]+)/);
-    const token = tokenMatch ? tokenMatch[1] : null;
-    const user = await getCurrentUser(token);
-
-    if (!user) {
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    const charters = await getClubChartersForUser(user._id);
+    const charters = await getAllCharters();
     return NextResponse.json(charters, { status: 200 });
 }
 

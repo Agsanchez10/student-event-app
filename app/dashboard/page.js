@@ -10,6 +10,8 @@ import Event from "@/models/Event";
 import Club from "@/models/Club";
 import ClubCharterActivityClient from "./ClubCharterActivityClient";
 import { getClubChartersForUser } from "@/services/clubCharterService";
+import RegisteredEventsClient from "./RegisteredEventsClient";
+
 
 const ITEMS_PER_PAGE = 10;
 
@@ -41,6 +43,11 @@ const getCurrentUser = withDB(async (token) => {
     }
 });
 
+const getEventsByUserId = withDB(async (userId) => {
+    
+    return await Event.find({ registrationList: { $in: [Number(userId)] } }).sort({ date: 1 }).lean();
+});
+
 const getEventsByIds = withDB(async (ids) => {
     if (!ids?.length) return [];
     return await Event.find({ _id: { $in: ids } }).sort({ date: 1 }).lean();
@@ -51,10 +58,13 @@ const getClubsByIds = withDB(async (ids) => {
     return await Club.find({ _id: { $in: ids } }).lean();
 });
 
+
 export default async function Dashboard({ searchParams }) {
     const cookieStore = await cookies();
     const token = cookieStore.get("token")?.value;
-    const user = await getCurrentUser(token);
+    const rawUser = await getCurrentUser(token);
+    const user = rawUser ? JSON.parse(JSON.stringify(rawUser)) : null;
+    const params = await searchParams;
 
     if (!user) {
         return (
@@ -68,22 +78,22 @@ export default async function Dashboard({ searchParams }) {
     }
 
     const role = user.role;
-    const eventPage = parseInt(searchParams?.eventPage ?? "1", 10) || 1;
-    const clubPage = parseInt(searchParams?.clubPage ?? "1", 10) || 1;
-    const pageStart = (eventPage - 1) * ITEMS_PER_PAGE;
-    const clubStart = (clubPage - 1) * ITEMS_PER_PAGE;
-
-    const studentEvents = await getEventsByIds(user.eventRegistrations || []);
+    const eventPage = parseInt(params?.eventPage ?? "1", 10) || 1;
+    const clubPage = parseInt(params?.clubPage ?? "1", 10) || 1;
+    const eventPageStart = (eventPage - 1) * ITEMS_PER_PAGE;
+    const clubPageStart = (clubPage - 1) * ITEMS_PER_PAGE;
+    const userCharters = await getClubChartersForUser(user._id);
+    const charterPages = Math.max(1, Math.ceil(userCharters.length / ITEMS_PER_PAGE));    
+    const charterPage = parseInt(params?.charterPage ?? "1", 10) || 1;    
+    const charterPageStart = (charterPage - 1) * ITEMS_PER_PAGE;
+    const studentEvents = await getEventsByUserId(user._id);
     const memberClubs = await getClubsByIds(user.clubMemberships || []);
     const ownedClubs = await getClubsByIds(user.ownedClubs || []);
-    const userCharters = await getClubChartersForUser(user._id);
-    const charterPage = parseInt(searchParams?.charterPage ?? "1", 10) || 1;
-    const charterStart = (charterPage - 1) * ITEMS_PER_PAGE;
     const studentEventPages = Math.max(1, Math.ceil(studentEvents.length / ITEMS_PER_PAGE));
-    const charterPages = Math.max(1, Math.ceil(userCharters.length / ITEMS_PER_PAGE));
     const ownedClubPages = Math.max(1, Math.ceil(ownedClubs.length / ITEMS_PER_PAGE));
     const initiatedCharters = userCharters.filter((charter) => String(charter.initiatorId) === String(user._id));
     const signedCharters = userCharters.filter((charter) => String(charter.initiatorId) !== String(user._id));
+    
 
     if (role === "ClubOwner" && ownedClubs.length === 1) {
         redirect(`/dashboard/clubs/${ownedClubs[0]._id}`);
@@ -128,51 +138,12 @@ export default async function Dashboard({ searchParams }) {
 
                 {role === "Student" ? (
                     <section className="space-y-6">
-                        <div className="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-slate-200 dark:bg-slate-900 dark:ring-slate-700">
-                            <div className="flex items-center justify-between gap-4">
-                                <div>
-                                    <h2 className="text-xl font-semibold text-slate-950 dark:text-white">Registered events</h2>
-                                    <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">Showing up to {ITEMS_PER_PAGE} events you are registered for.</p>
-                                </div>
-                                <Link href="/dashboard/events" className="rounded-full bg-slate-950 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-950 dark:hover:bg-slate-200">View all events</Link>
-                            </div>
-
-                            {studentEvents.length === 0 ? (
-                                <div className="mt-6 rounded-3xl border border-slate-200 bg-slate-50 p-6 text-slate-600 dark:border-slate-800 dark:bg-slate-950 dark:text-slate-300">You are not registered for any events yet.</div>
-                            ) : (
-                                <>
-                                    <div className="mt-6 space-y-4">
-                                        {studentEvents.slice(pageStart, pageStart + ITEMS_PER_PAGE).map((event) => (
-                                            <div key={event._id} className="rounded-3xl border border-slate-200 bg-slate-50 p-4 dark:border-slate-800 dark:bg-slate-950">
-                                                <h3 className="text-lg font-semibold text-slate-950 dark:text-white">{event.name || "Untitled Event"}</h3>
-                                                <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">{event.description || "No description provided."}</p>
-                                                <div className="mt-3 flex flex-wrap gap-3 text-sm text-slate-500 dark:text-slate-400">
-                                                    <span>Date: {formatDate(event.date)}</span>
-                                                    <span>Time: {formatTime(event.date)}</span>
-                                                </div>
-                                            </div>
-                                        ))}
-                                    </div>
-                                    {studentEventPages > 1 ? (
-                                        <div className="mt-6 flex items-center justify-between rounded-3xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-600 dark:border-slate-800 dark:bg-slate-950 dark:text-slate-300">
-                                            <Link
-                                                href={`/dashboard?eventPage=${Math.max(1, eventPage - 1)}&clubPage=${clubPage}`}
-                                                className={`rounded-full px-4 py-2 transition ${eventPage === 1 ? "bg-slate-200 text-slate-400 cursor-not-allowed" : "bg-slate-950 text-white hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-950 dark:hover:bg-slate-200"}`}
-                                            >
-                                                Previous
-                                            </Link>
-                                            <span>Page {eventPage} of {studentEventPages}</span>
-                                            <Link
-                                                href={`/dashboard?eventPage=${Math.min(studentEventPages, eventPage + 1)}&clubPage=${clubPage}`}
-                                                className={`rounded-full px-4 py-2 transition ${eventPage === studentEventPages ? "bg-slate-200 text-slate-400 cursor-not-allowed" : "bg-slate-950 text-white hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-950 dark:hover:bg-slate-200"}`}
-                                            >
-                                                Next
-                                            </Link>
-                                        </div>
-                                    ) : null}
-                                </>
-                            )}
-                        </div>
+                        <RegisteredEventsClient
+                            registeredEvents={studentEvents}
+                            clubPage={clubPage}
+                            eventPage={eventPage}
+                            currentUser={String(user._id)}
+                        />
 
                         <div className="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-slate-200 dark:bg-slate-900 dark:ring-slate-700">
                             <div>
@@ -184,7 +155,7 @@ export default async function Dashboard({ searchParams }) {
                                 <div className="mt-6 rounded-3xl border border-slate-200 bg-slate-50 p-6 text-slate-600 dark:border-slate-800 dark:bg-slate-950 dark:text-slate-300">You are not a member of any clubs yet.</div>
                             ) : (
                                 <div className="mt-6 grid gap-4 sm:grid-cols-2">
-                                    {memberClubs.slice(clubStart, clubStart + ITEMS_PER_PAGE).map((club) => (
+                                    {memberClubs.slice(clubPageStart, clubPageStart + ITEMS_PER_PAGE).map((club) => (
                                         <div key={club._id} className="rounded-3xl border border-slate-200 bg-slate-50 p-4 dark:border-slate-800 dark:bg-slate-950">
                                             <h3 className="text-lg font-semibold text-slate-950 dark:text-white">{club.name || "Unnamed Club"}</h3>
                                             <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">{club.description || "No description available."}</p>
@@ -198,7 +169,7 @@ export default async function Dashboard({ searchParams }) {
                             charters={userCharters}
                             currentPage={charterPage}
                             itemsPerPage={ITEMS_PER_PAGE}
-                            currentUserId={user._id}
+                            currentUserId={String(user._id)}
                         />
                     </section>
                 ) : null}
@@ -230,7 +201,7 @@ export default async function Dashboard({ searchParams }) {
                             ) : (
                                 <>
                                     <div className="mt-6 space-y-4">
-                                        {ownedClubs.slice(clubStart, clubStart + ITEMS_PER_PAGE).map((club) => (
+                                        {ownedClubs.slice(clubPageStart, clubPageStart + ITEMS_PER_PAGE).map((club) => (
                                             <div key={club._id} className="rounded-3xl border border-slate-200 bg-slate-50 p-4 dark:border-slate-800 dark:bg-slate-950">
                                                 <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                                                     <div>

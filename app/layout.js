@@ -8,6 +8,7 @@ import jwt from "jsonwebtoken";
 import { withDB } from "@/lib/mongodb";
 import User from "@/models/User";
 
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -39,6 +40,7 @@ export default async function RootLayout({ children }) {
   const token = cookieStore.get("token")?.value;
   const user = await getCurrentUser(token);
 
+  
   return (
     <html
       lang="en"

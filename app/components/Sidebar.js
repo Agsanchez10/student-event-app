@@ -5,6 +5,9 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useRouter } from "next/navigation";
 
+
+
+
 export default function Sidebar({ isOpen, onToggle }) {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const router = useRouter();
@@ -60,7 +63,7 @@ export default function Sidebar({ isOpen, onToggle }) {
         <div className="flex h-full flex-col">
           {/* Header */}
           <div className="flex items-center justify-between gap-4 p-4 border-b border-slate-200 dark:border-slate-700">
-            <img src="/logos/bullepin_minimal_4pins.svg" alt="Bullepin Logo" className="h-10 w-auto" />
+            <img src="/logos/bullepin_minimal_4pins.svg" alt="Bullepin Logo" className="h-50 w-auto" />
             <button
               onClick={onToggle}
               className="flex h-[15px] w-[15px] items-center justify-center rounded-full text-slate-500 hover:bg-slate-100 hover:text-slate-700 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-200"

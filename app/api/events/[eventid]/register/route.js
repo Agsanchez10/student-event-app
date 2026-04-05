@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { registerForEvent, unregisterFromEvent } from "@/services/eventService";
+import { cookies } from "next/headers";
 import jwt from "jsonwebtoken";
 
 const getUserFromToken = (token) => {
@@ -16,12 +17,13 @@ export async function POST(req, { params }) {
 
     try {
         // Get user from token
-        const authHeader = req.headers.get("authorization");
-        if (!authHeader || !authHeader.startsWith("Bearer ")) {
+        const cookieStore = await cookies();
+        const token = cookieStore.get("token")?.value;
+        
+        if (!token) {
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
 
-        const token = authHeader.split(" ")[1];
         const user = getUserFromToken(token);
 
         // Register user for event
@@ -42,13 +44,12 @@ export async function DELETE(req, { params }) {
     const { eventid } = await params;
 
     try {
-        // Get user from token
-        const authHeader = req.headers.get("authorization");
-        if (!authHeader || !authHeader.startsWith("Bearer ")) {
+        const cookieStore = await cookies();
+        const token = cookieStore.get("token")?.value;
+
+        if(!token) {
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
-
-        const token = authHeader.split(" ")[1];
         const user = getUserFromToken(token);
 
         // Unregister user from event

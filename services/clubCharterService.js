@@ -56,6 +56,11 @@ export const getPendingChartersForAdmin = withDB(async () => {
     }).sort({ createdAt: -1 }).lean();
 });
 
+// remove this before deployment - only for testing purposes
+export const getAllCharters = withDB(async () => {
+    return await ClubCharter.find({}).sort({ createdAt: -1 }).lean();
+});
+
 export const removeSignatureFromCharter = withDB(async (charterId, userId) => {
     const charter = await ClubCharter.findOne({ _id: Number(charterId) });
     if (!charter) {

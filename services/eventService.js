@@ -71,3 +71,15 @@ export const unregisterFromEvent = withDB(async (eventId, userId) => {
 
     return event;
 });
+
+export const getUserEvents = withDB(async (userId) => {
+    const events = await Event.find({
+        registrationList: { $in: [Number(userId)] }
+    });
+    return events;
+});
+
+export const getPublicEvents = withDB(async () => {
+    const events = await Event.find({ visibility: "public" }).sort({ date: 1 });
+    return events;
+});

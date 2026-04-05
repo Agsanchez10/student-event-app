@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 const formatDate = (value) => {
     if (!value) return "TBD";
@@ -35,6 +36,7 @@ export default function EventListClient({ events, currentUser }) {
     const [filter, setFilter] = useState("");
     const [dateFilter, setDateFilter] = useState("");
     const [registeringEvents, setRegisteringEvents] = useState(new Set());
+    const router = useRouter();
 
     const filteredEvents = events.filter((event) => {
         const matchesText =
@@ -49,7 +51,7 @@ export default function EventListClient({ events, currentUser }) {
 
     const isUserRegistered = (event) => {
         if (!currentUser || !event.registrationList) return false;
-        return event.registrationList.includes(currentUser._id);
+        return event.registrationList.some(id => String(id) === String(currentUser._id));
     };
 
     const handleRegister = async (eventId) => {
@@ -61,22 +63,12 @@ export default function EventListClient({ events, currentUser }) {
             const response = await fetch(`/api/events/${eventId}/register`, {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${document.cookie.split('token=')[1]?.split(';')[0]}`
+                    'Content-Type': 'application/json',                    
                 }
             });
 
             if (response.ok) {
-                // Update the event in the local state to reflect registration
-                const updatedEvents = events.map(event =>
-                    event._id === eventId
-                        ? { ...event, registrationList: [...(event.registrationList || []), currentUser._id] }
-                        : event
-                );
-                // Since this is a client component, we need to trigger a re-render
-                // For now, we'll just show a success message and refresh the page
-                alert('Successfully registered for the event!');
-                window.location.reload();
+                router.refresh();
             } else {
                 const error = await response.json();
                 alert(`Registration failed: ${error.error}`);

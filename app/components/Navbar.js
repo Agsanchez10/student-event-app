@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 export default function Navbar() {
   const [showLogin, setShowLogin] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, SetError] = useState(null);
+  const [error, setError] = useState(null);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -33,17 +33,19 @@ export default function Navbar() {
       
       if (!res.ok) {
         const errorData = await res.json();
-        SetError(`Login failed: ${errorData.error}`);
+        setError(`Login failed: ${errorData.error}`);
         return;
       } 
       
       setIsLoggedIn(true);
       setShowLogin(false);
-      router.push("/dashboard");      
+
+      
+      window.location.href = "/dashboard";
 
     } catch (error) {
       console.error("Login error:", error);
-      SetError("An error occurred during login.");
+      setError("An error occurred during login.");
     } finally {
       setIsLoading(false);
     }
@@ -54,7 +56,7 @@ export default function Navbar() {
       const res = await fetch("/api/auth/logout", { method: "POST" });
       if (res.ok) {
         setIsLoggedIn(false);
-        router.push("/");
+        window.location.href = "/logout";
       } else {
         console.error("Logout failed");
       }
@@ -78,10 +80,10 @@ export default function Navbar() {
             <a href="/" className="nav-link">Home</a>
           </li>
           <li className="about-link">
-            <a href="/about" className="nav-link">About</a>
+            <a href="/public/about" className="nav-link">About</a>
           </li>
           <li className="contact-link">
-            <a href="/contact" className="nav-link">Contact</a>
+            <a href="/public/contact" className="nav-link">Contact</a>
           </li>
           |
           <li className="login-link">

@@ -42,6 +42,12 @@ export const Admin = mongoose.models.Admin ??
     User.discriminator(
         "Admin", 
         new mongoose.Schema({
+            adminType: { 
+                type: String, 
+                enum: ["SystemAdmin", "CollegeAdmin"], 
+                default: "CollegeAdmin"
+            },
+            isActive: { type: Boolean, default: true },
             pastActions: [{ type: String }]
         })
     );

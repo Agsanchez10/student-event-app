@@ -4,6 +4,8 @@ import { cookies } from "next/headers";
 import jwt from "jsonwebtoken";
 import User from "@/models/User";
 import { withDB } from "@/lib/mongodb";
+import { redirect } from "next/navigation";
+
 
 const normalizeEvent = (event) => ({
     _id: event._id,
@@ -11,6 +13,8 @@ const normalizeEvent = (event) => ({
     description: event.description,
     date: event.date ? event.date.toISOString() : null,
     location: event.location,
+    ownerId: event.ownerId,
+    registrationList: event.registrationList,
     createdAt: event.createdAt ? event.createdAt.toISOString() : null,
 });
 
@@ -31,6 +35,12 @@ export default async function EventList() {
     const cookieStore = await cookies();
     const token = cookieStore.get("token")?.value;
     const user = token ? await getCurrentUser(token) : null;
+    const plainUser = user ? JSON.parse(JSON.stringify(user)) : null;
 
-    return <EventListClient events={eventsData} currentUser={user} />;
+    if (!user) {
+        redirect("/login");
+        return null;
+    }
+
+    return <EventListClient events={eventsData} currentUser={plainUser} />;
 }
