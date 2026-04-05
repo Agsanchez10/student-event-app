@@ -1,5 +1,7 @@
-![bullepin_minimal_4pins](https://github.com/user-attachments/assets/c5fdc8c0-7596-4abd-a622-85542b63f8c2)# Bullepin - Student Event App
-![Up<svg width="20%" viewBox="0 0 160 200" xmlns="http://www.w3.org/2000/svg">
+# Bullepin - Student Event App
+
+![bullepin_minimal_4pins](https://github.com/user-attachments/assets/c5fdc8c0-7596-4abd-a622-85542b63f8c2)
+![Up<svg width="20%" viewBox="0 0 30 45" xmlns="http://www.w3.org/2000/svg">
 <defs>
 
 </defs>
