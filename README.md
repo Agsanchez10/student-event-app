@@ -39,7 +39,7 @@ A comprehensive campus event and club management application built with Next.js,
 - **Flag Organization**: Browse flagged items by type and status
 
 ### 📊 Dashboards & Personalization
-- **Role-Based Dashboards**: 
+- **Role-Based Dashboards**:
   - Student Dashboard: Registered events, club memberships, charter activity
   - College Admin Dashboard: Manage events, clubs, charters, and flagged content
   - System Admin Dashboard: User management and admin controls
@@ -105,6 +105,40 @@ services/                    # Business logic & database operations
 lib/
 └── mongodb.js              # MongoDB connection utility
 ```
+
+## Getting Started
+
+### Prerequisites
+- Node.js 18+
+- MongoDB instance (local or MongoDB Atlas)
+- npm or yarn package manager
+
+### Installation
+
+1. Clone the repository
+```bash
+git clone <repository-url>
+cd student-event-app
+```
+
+2. Install dependencies
+```bash
+npm install
+```
+
+3. Set up environment variables by creating a `.env.local` file:
+```
+MONGODB_URI=your_mongodb_connection_string
+JWT_SECRET=your_jwt_secret_key
+NODE_ENV=development
+```
+
+4. Run the development server
+```bash
+npm run dev
+```
+
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ## Key API Endpoints
 
@@ -224,24 +258,4 @@ Access the testing dashboard at `/testing` to quickly navigate to all pages and 
 - Enhanced search and filtering
 - Calendar view for events
 - File uploads for events and clubs
-- Social features (event sharing, comments)/vercel/next.js/tree/canary/packages/create-next-app).
-
-## Getting Started
-
-First, run the development server:
-
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-#   s t u d e n t - e v e n t - a p p 
- 
- 
+- Social features (event sharing, comments)
