@@ -59,6 +59,7 @@ export default function RegisterClient() {
 
             setSuccess(true);
             setTimeout(() => {
+                sendWelcomeEmail();
                 router.push("/login");
             }, 2000);
         } catch (error) {
@@ -68,6 +69,37 @@ export default function RegisterClient() {
             setIsLoading(false);
         }
     };
+
+    const sendWelcomeEmail = async () => {
+        try {
+            const response = await fetch("/api/email/send", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    email: email.trim().toLowerCase(),
+                    subject: "Welcome to the Student Event App!",
+                    message: `Hi ${firstName || 'there'},\n\nThank you for registering on our platform! We're excited to have you on board. Start exploring and managing your events today!\n\nBest regards,\nThe Student Event App Team`,
+                }),
+            });
+        
+
+        if(!response.ok) {
+            const errorData = await response.json();
+            console.error("Error sending welcome email:", errorData.error || "Unknown error");
+            return { success: false, error: errorData.error || "Failed to send welcome email" };
+        }
+
+        const data = await response.json();
+        console.log("Welcome email sent successfully:", data);
+        return { success: true, data };
+
+        } catch (error) {
+            console.error("Error sending welcome email:", error);
+                return { success: false, error: error.message || "An error occurred while sending welcome email" };
+        }
+    };
+
+
 
     return (
         <div className="min-h-[75vh] flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-950 dark:to-slate-900 px-4">
