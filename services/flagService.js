@@ -16,6 +16,15 @@ export const getFlags = withDB(async () => {
 });
 
 /**
+ * Get all unresolved flags (for admin review)
+ * @returns {Promise<Array>} Unresolved flag documents
+ */
+export const getUnresolvedFlags = withDB(async () => {
+    const flags = await Flag.find({ isResolved: false }).sort({ reportedAt: -1 });
+    return flags;
+});
+
+/**
  * Get a specific flag by ID
  * @param {number} flagid - The numeric flag ID
  * @returns {Promise<Object>} Flag document

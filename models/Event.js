@@ -6,7 +6,7 @@ const EventSchema = new mongoose.Schema({
     description: String,
     date: Date,
     location: String,
-    club: String,        
+    clubId: { type: Number, ref: "Club" },
     visibility: { type: String, enum: ["public", "private"], default: "public" },
     ownerId: { type: Number, ref: "User" },
     registrationList: [{ type: Number, ref: "User" }],

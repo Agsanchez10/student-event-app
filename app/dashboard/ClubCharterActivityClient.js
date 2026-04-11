@@ -30,7 +30,7 @@ export default function ClubCharterActivityClient({ charters, currentPage, items
 
         if (response.ok) {
             setActiveCharters((current) => current.filter((charter) => String(charter._id) !== String(charterId)));
-            setConfirmDeleteId(null);
+            
         } else {
             const error = await response.json();
             console.error("Unable to cancel charter:", error);

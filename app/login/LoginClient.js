@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 export default function LoginClient() {
     const [email, setEmail] = useState("");
@@ -69,6 +70,19 @@ export default function LoginClient() {
                         Sign In
                     </button>
                     {error && <p className="text-red-500 text-sm text-center">{error}</p>}
+                    
+                    {/* Register Link */}
+                    <div className="text-center">
+                        <p className="text-sm text-slate-600 dark:text-slate-400">
+                            Don't have an account?{" "}
+                            <Link
+                                href="/register"
+                                className="font-medium text-[#e12b53] hover:text-[#c91f4a] transition"
+                            >
+                                Create one
+                            </Link>
+                        </p>
+                    </div>
                 </form>
             </div>
         </div>

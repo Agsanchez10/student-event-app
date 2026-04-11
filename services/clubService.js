@@ -1,5 +1,7 @@
 import { withDB } from "@/lib/mongodb";
 import Club from "@/models/Club";
+import Event from "@/models/Event";
+import Announcement from "@/models/Announcement";
 
 // return all clubs
 export const getClubs = withDB(async () => {
@@ -29,6 +31,13 @@ export const deleteClub = withDB(async (clubid) => {
     if (!club) {
         throw new Error("404: Club not found");
     }
+    
+    // Delete all events associated with this club
+    await Event.deleteMany({ clubId: Number(clubid) });
+    
+    // Delete all announcements associated with this club
+    await Announcement.deleteMany({ clubID: Number(clubid) });
+    
     return club;
 });
 

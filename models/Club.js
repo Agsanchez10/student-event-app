@@ -8,7 +8,9 @@ const ClubSchema = new mongoose.Schema({
     memberList: [{type: Number, ref: "User" }],   
     ownerID: { type: Number, ref: "User" },
     admin: { type: Number, ref: "User" },
-    announcements: [{ type: String }],
+    announcements: [{ type: Number, ref: "Announcement" }],
+    isPrivate: { type: Boolean, default: false },
+    membershipApplications: [{ type: Number, ref: "MembershipApplication" }],
     createdAt: {
         type: Date,
         default: Date.now,

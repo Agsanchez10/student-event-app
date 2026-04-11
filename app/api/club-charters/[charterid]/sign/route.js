@@ -20,13 +20,16 @@ export async function POST(req, { params }) {
     const tokenMatch = cookie.match(/token=([^;]+)/);
     const token = tokenMatch ? tokenMatch[1] : null;
     const user = await getCurrentUser(token);
+    const paramData = await params;
+    const charterId = paramData.charterid;
+   
 
     if (!user) {
         return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     try {
-        const charter = await signClubCharter(params.charterid, user._id);
+        const charter = await signClubCharter(charterId, user._id);
         return NextResponse.json(charter, { status: 200 });
     } catch (error) {
         const message = error?.message || "Unable to sign charter.";

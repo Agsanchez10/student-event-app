@@ -67,7 +67,7 @@ export default function RegisteredEventsClient({ registeredEvents, eventPage, cl
                                     <h2 className="text-xl font-semibold text-slate-950 dark:text-white">Registered events</h2>
                                     <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">Showing up to {ITEMS_PER_PAGE} events you are registered for.</p>
                                 </div>
-                                <Link href="/dashboard/events" className="rounded-full bg-slate-950 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-950 dark:hover:bg-slate-200">View all events</Link>
+                                <Link href="/dashboard/registeredEvents" className="rounded-full bg-slate-950 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-950 dark:hover:bg-slate-200">View all registered events</Link>
                             </div>
                             
                             {registeredEvents.length === 0 ? (
@@ -107,9 +107,9 @@ export default function RegisteredEventsClient({ registeredEvents, eventPage, cl
                                                     
                                                 </div>
                                                 <div className="mt-3 flex flex-wrap gap-3 text-sm text-slate-500 dark:text-slate-400">
-                                                        <span>📅 {formatDate(event.date)}</span>
-                                                        <span>🕒 {formatTime(event.date)}</span>
-                                                    </div>
+                                                    <span>📅 {formatDate(event.date)}</span>
+                                                    <span>🕒 {formatTime(event.date)}</span>
+                                                </div>
                                             </div>
                                         ))}
                                     </div>

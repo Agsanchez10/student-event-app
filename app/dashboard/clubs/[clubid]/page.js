@@ -1,17 +1,103 @@
-import Link from "next/link";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
+import jwt from "jsonwebtoken";
+import { withDB } from "@/lib/mongodb";
+import User from "@/models/User";
+import Announcement from "@/models/Announcement";
+import Event from "@/models/Event";
+import MembershipApplication from "@/models/MembershipApplication";
+import { getClub } from "@/services/clubService";
+import ClubDashboardClient from "./ClubDashboardClient";
 
-export default function ClubOwnerManagement({ params }) {
+const getCurrentUser = withDB(async (token) => {
+    if (!token || !process.env.JWT_SECRET) return null;
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        return await User.findOne({ _id: Number(decoded.id) });
+    } catch (error) {
+        return null;
+    }
+});
+
+const getClubAnnouncements = withDB(async (clubID) => {
+    const announcements = await Announcement.find({ clubID: Number(clubID) })
+        .sort({ createdAt: -1 })
+        .lean();
+    return announcements;
+});
+
+const getClubEvents = withDB(async (clubName) => {
+    const events = await Event.find({ club: clubName })
+        .sort({ date: 1 })
+        .lean();
+    return events;
+});
+
+const getMembershipApplications = withDB(async (clubID) => {
+    const applications = await MembershipApplication.find({
+        clubID: Number(clubID),
+        status: "pending",
+    }).lean();
+    return applications;
+});
+
+export default async function ClubOwnerManagement({ params }) {
+    const cookieStore = await cookies();
+    const token = cookieStore.get("token")?.value;
+    const rawUser = await getCurrentUser(token);
+    const user = rawUser ? JSON.parse(JSON.stringify(rawUser)) : null;
+
+    if (!user) {
+        return (
+            <div className="min-h-screen bg-slate-50 py-16 dark:bg-slate-950">
+                <main className="mx-auto w-full max-w-4xl rounded-3xl border border-slate-200 bg-white p-10 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+                    <h1 className="text-3xl font-semibold text-slate-950 dark:text-white">Club Management</h1>
+                    <p className="mt-4 text-slate-600 dark:text-slate-300">Please sign in to access the club dashboard.</p>
+                </main>
+            </div>
+        );
+    }
+
+    const resolve_params = await params;
+    const clubId = Number(resolve_params.clubid);
+    const clubInfo = await getClub(clubId);
+    const club = JSON.parse(JSON.stringify(clubInfo));
+
+    // Check if user is admin of this club
+    const isAdmin =
+        String(club.admin) === String(user._id) ||
+        String(club.ownerID) === String(user._id);
+
+    // Check if user is a member of this club
+    const isMember = user.clubMemberships && user.clubMemberships.includes(clubId);
+
+    // Allow access if user is admin or member
+    if (!isAdmin && !isMember) {
+        return (
+            <div className="min-h-screen bg-slate-50 py-16 dark:bg-slate-950">
+                <main className="mx-auto w-full max-w-4xl rounded-3xl border border-slate-200 bg-white p-10 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+                    <h1 className="text-3xl font-semibold text-slate-950 dark:text-white">Access Denied</h1>
+                    <p className="mt-4 text-slate-600 dark:text-slate-300">
+                        You do not have permission to access this club.
+                    </p>
+                </main>
+            </div>
+        );
+    }
+
+    const announcements = await getClubAnnouncements(clubId);
+    const events = await getClubEvents(club.name);
+    const membershipApplications = await getMembershipApplications(clubId);
+
     return (
-        <div className="min-h-screen bg-slate-50 py-16 dark:bg-slate-950">
-            <main className="mx-auto w-full max-w-4xl rounded-3xl border border-slate-200 bg-white p-10 shadow-sm dark:border-slate-800 dark:bg-slate-900">
-                <div className="flex flex-col gap-6">
-                    <div>
-                        <h1 className="text-3xl font-semibold text-slate-950 dark:text-white">Club Management</h1>
-                        <p className="mt-4 text-slate-600 dark:text-slate-300">Manage club ID {params.clubid} from here.</p>
-                    </div>
-                    <Link href="/dashboard/clubs" className="inline-flex rounded-full bg-slate-950 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-950 dark:hover:bg-slate-200">Back to club management</Link>
-                </div>
-            </main>
-        </div>
+        <ClubDashboardClient
+            club={club}
+            currentUserId={user._id}
+            isAdmin={isAdmin}
+            isMember={isMember}
+            announcements={announcements}
+            events={events}
+            membershipApplications={membershipApplications}
+        />
     );
 }

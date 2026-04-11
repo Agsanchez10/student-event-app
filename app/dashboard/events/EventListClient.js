@@ -180,8 +180,12 @@ export default function EventListClient({ events, currentUser }) {
                     >
                         <div className="flex items-start justify-between gap-4 border-b border-slate-200 px-6 py-5 dark:border-slate-800">
                             <div>
-                                <p className="text-sm font-semibold uppercase tracking-[0.24em] text-emerald-700 dark:text-emerald-300">Event details</p>
-                                <h2 className="mt-2 text-2xl font-semibold text-slate-950 dark:text-white">{selectedEvent.name || "Untitled Event"}</h2>
+                                <p className="text-sm font-semibold uppercase tracking-[0.24em] text-emerald-700 dark:text-emerald-300">
+                                    Event details
+                                </p>
+                                <h2 className="mt-2 text-2xl font-semibold text-slate-950 dark:text-white">
+                                    {selectedEvent.name || "Untitled Event"}
+                                </h2>
                             </div>
                             <button
                                 type="button"

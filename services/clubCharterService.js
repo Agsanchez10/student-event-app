@@ -4,7 +4,10 @@ import ClubCharter from "@/models/ClubCharter";
 export const createClubCharter = withDB(async (body) => {
     const lastID = await ClubCharter.findOne().sort({ _id: -1 });
     const newId = lastID ? lastID._id + 1 : 1;
-    const charter = await ClubCharter.create({ ...body, _id: newId, signatures: [], status: "collecting" });
+
+    
+
+    const charter = await ClubCharter.create({ ...body, _id: newId, signatures: [body.initiatorId], status: "collecting" });
     return charter;
 });
 

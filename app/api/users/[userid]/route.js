@@ -40,6 +40,5 @@ export async function PUT(req, { params }) {
             return NextResponse.json({ error: error.message }, { status: 404 });
         }
         return NextResponse.json({ error: "An error occurred while updating the user" }, { status: 500 });
-    }   
-    
+    }       
 }

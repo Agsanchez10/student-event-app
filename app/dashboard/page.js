@@ -11,6 +11,8 @@ import Club from "@/models/Club";
 import ClubCharterActivityClient from "./ClubCharterActivityClient";
 import { getClubChartersForUser } from "@/services/clubCharterService";
 import RegisteredEventsClient from "./RegisteredEventsClient";
+import StudentDashboardClient from "./StudentDashboardClient";
+import { getRecentAnnouncementsByClubIds } from "@/services/announcementService";
 
 
 const ITEMS_PER_PAGE = 10;
@@ -89,6 +91,7 @@ export default async function Dashboard({ searchParams }) {
     const studentEvents = await getEventsByUserId(user._id);
     const memberClubs = await getClubsByIds(user.clubMemberships || []);
     const ownedClubs = await getClubsByIds(user.ownedClubs || []);
+    const recentAnnouncements = await getRecentAnnouncementsByClubIds(user.clubMemberships || []);
     const studentEventPages = Math.max(1, Math.ceil(studentEvents.length / ITEMS_PER_PAGE));
     const ownedClubPages = Math.max(1, Math.ceil(ownedClubs.length / ITEMS_PER_PAGE));
     const initiatedCharters = userCharters.filter((charter) => String(charter.initiatorId) === String(user._id));
@@ -100,131 +103,146 @@ export default async function Dashboard({ searchParams }) {
     }
 
     return (
-        <div className="h-bg-slate-50 py-10 dark:bg-slate-950">
-            <main className="mx-auto w-full max-w-6xl space-y-8 px-4 sm:px-6 lg:px-8">
-                <section className="rounded-3xl bg-white p-8 shadow-sm ring-1 ring-slate-200 dark:bg-slate-900 dark:ring-slate-700">
-                    <h1 className="text-3xl font-semibold text-slate-950 dark:text-white">Dashboard</h1>
-                    <p className="mt-3 text-sm text-slate-500 dark:text-slate-400">Your personalized dashboard based on your role as {role}.</p>
-                </section>
+        <main className="flex-1 min-h-screen bg-[radial-gradient(circle_at_top_left,_rgba(249,243,229,0.6),_transparent_30%),radial-gradient(circle_at_bottom_right,_rgba(224,92,92,0.14),_transparent_20%),linear-gradient(180deg,_#f6f0e0_0%,_#e8d7bb_100%)] text-slate-900">
+            <div className="mx-auto flex min-h-full w-full max-w-6xl flex-col px-6 py-10 sm:px-8 lg:px-12">
+                {/* Header */}
+                <div className="mb-8">
+                    <h1 className="text-4xl font-semibold tracking-tight text-slate-950 sm:text-5xl">Dashboard</h1>
+                    <p className="mt-2 text-base text-slate-700 sm:text-lg">Your personalized dashboard based on your role as {role}.</p>
+                </div>
 
-                <section className="grid gap-6 lg:grid-cols-2">
-                    <div className="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-slate-200 dark:bg-slate-900 dark:ring-slate-700">
-                        <h2 className="text-xl font-semibold text-slate-950 dark:text-white">Account details</h2>
-                        <div className="mt-5 space-y-3 text-sm text-slate-600 dark:text-slate-300">
-                            <p><span className="font-semibold text-slate-900 dark:text-white">Name:</span> {user.firstName} {user.lastName}</p>
-                            <p><span className="font-semibold text-slate-900 dark:text-white">Email:</span> {user.email}</p>
-                            <p><span className="font-semibold text-slate-900 dark:text-white">Role:</span> {role}</p>
+                {/* Account Details & Quick Actions */}
+                <div className="mb-8 grid gap-6 lg:grid-cols-2">
+                    {/* Account Details Card */}
+                    <div className="relative rounded-[2rem] border border-[#d4b18b]/40 bg-[#f9f2e4] p-8 shadow-[0_25px_65px_-30px_rgba(15,23,42,0.75)]">
+                        <p className="text-sm uppercase tracking-[0.24em] font-semibold text-[#a33b3b]">Account Details</p>
+                        <div className="mt-6 space-y-4">
+                            <div>
+                                <p className="text-xs uppercase tracking-[0.2em] text-[#8a5f3a]">Name</p>
+                                <p className="mt-2 text-lg font-semibold text-slate-950">{user.firstName} {user.lastName}</p>
+                            </div>
+                            <div>
+                                <p className="text-xs uppercase tracking-[0.2em] text-[#8a5f3a]">Email</p>
+                                <p className="mt-2 text-sm text-slate-700">{user.email}</p>
+                            </div>
+                            <div>
+                                <p className="text-xs uppercase tracking-[0.2em] text-[#8a5f3a]">Role</p>
+                                <p className="mt-2 inline-flex rounded-full bg-[#e05c5c]/15 px-3 py-1 text-sm font-semibold text-[#a33b3b]">
+                                    {role}
+                                </p>
+                            </div>
                         </div>
                     </div>
 
-                    <div className="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-slate-200 dark:bg-slate-900 dark:ring-slate-700">
-                        <h2 className="text-xl font-semibold text-slate-950 dark:text-white">Quick actions</h2>
-                        <div className="mt-5 flex flex-col gap-3">
-                            <Link href="/dashboard/events" className="rounded-2xl bg-slate-950 px-4 py-3 text-sm font-semibold text-white transition hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-950 dark:hover:bg-slate-200">Browse all events</Link>
-                            <Link href="/dashboard/pending-charters" className="rounded-2xl bg-indigo-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-indigo-700">View Pending Charters</Link>
+                    {/* Quick Actions Card */}
+                    <div className="relative rounded-[2rem] border border-[#d4b18b]/40 bg-[#f9f2e4] p-8 shadow-[0_25px_65px_-30px_rgba(15,23,42,0.75)]">
+                        <p className="text-sm uppercase tracking-[0.24em] font-semibold text-[#a33b3b]">Quick Actions</p>
+                        <div className="mt-6 flex flex-col gap-3">
+                            {role !== "ClubOwner" ? (
+                                <>
+                                    <Link href="/dashboard/events" className="rounded-full bg-[#e05c5c] px-6 py-3 text-sm font-semibold text-white transition hover:bg-[#c94a4a]">
+                                        Browse all events
+                                    </Link>
+                                    <Link href="/dashboard/clubs" className="rounded-full bg-[#d4975a] px-6 py-3 text-sm font-semibold text-white transition hover:bg-[#b8805f]">
+                                        Browse all clubs
+                                    </Link>
+                                    <Link href="/dashboard/pending-charters" className="rounded-full bg-[#c8a882] px-6 py-3 text-sm font-semibold text-white transition hover:bg-[#a68963]">
+                                        View Pending Charters
+                                    </Link>
+                                </>
+                            ) : null}
                             {role === "Admin" ? (
                                 <>
-                                    <Link href="/dashboard/flags" className="rounded-2xl bg-amber-500 px-4 py-3 text-sm font-semibold text-slate-950 transition hover:bg-amber-400">Flagged Content</Link>
-                                    <Link href="/dashboard/new-club-charters" className="rounded-2xl bg-cyan-500 px-4 py-3 text-sm font-semibold text-slate-950 transition hover:bg-cyan-400">New Club Charters</Link>
-                                    <Link href="/dashboard/clubs" className="rounded-2xl bg-emerald-500 px-4 py-3 text-sm font-semibold text-slate-950 transition hover:bg-emerald-400">Manage clubs</Link>
+                                    <Link href="/dashboard/admin/flagged-content" className="rounded-full bg-[#e05c5c] px-6 py-3 text-sm font-semibold text-white transition hover:bg-[#c94a4a]">
+                                        Flagged Content
+                                    </Link>
+                                    <Link href="/dashboard/new-club-charters" className="rounded-full bg-[#d4975a] px-6 py-3 text-sm font-semibold text-white transition hover:bg-[#b8805f]">
+                                        New Club Charters
+                                    </Link>
+                                    <Link href="/dashboard/clubs" className="rounded-full bg-[#c8a882] px-6 py-3 text-sm font-semibold text-white transition hover:bg-[#a68963]">
+                                        Manage clubs
+                                    </Link>
                                 </>
                             ) : null}
                             {role === "ClubOwner" ? (
-                                <Link href="/dashboard/clubs" className="rounded-2xl bg-emerald-500 px-4 py-3 text-sm font-semibold text-slate-950 transition hover:bg-emerald-400">View clubs you manage</Link>
+                                <p> *********************************************<br/> POSSIBLY REMOVE THIS <br/> *********************************************</p>
                             ) : null}
                         </div>
                     </div>
-                </section>
+                </div>
 
+                {/* Student Section */}
                 {role === "Student" ? (
-                    <section className="space-y-6">
-                        <RegisteredEventsClient
-                            registeredEvents={studentEvents}
-                            clubPage={clubPage}
-                            eventPage={eventPage}
-                            currentUser={String(user._id)}
-                        />
-
-                        <div className="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-slate-200 dark:bg-slate-900 dark:ring-slate-700">
-                            <div>
-                                <h2 className="text-xl font-semibold text-slate-950 dark:text-white">Clubs you belong to</h2>
-                                <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">View the clubs where you are a member.</p>
-                            </div>
-
-                            {memberClubs.length === 0 ? (
-                                <div className="mt-6 rounded-3xl border border-slate-200 bg-slate-50 p-6 text-slate-600 dark:border-slate-800 dark:bg-slate-950 dark:text-slate-300">You are not a member of any clubs yet.</div>
-                            ) : (
-                                <div className="mt-6 grid gap-4 sm:grid-cols-2">
-                                    {memberClubs.slice(clubPageStart, clubPageStart + ITEMS_PER_PAGE).map((club) => (
-                                        <div key={club._id} className="rounded-3xl border border-slate-200 bg-slate-50 p-4 dark:border-slate-800 dark:bg-slate-950">
-                                            <h3 className="text-lg font-semibold text-slate-950 dark:text-white">{club.name || "Unnamed Club"}</h3>
-                                            <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">{club.description || "No description available."}</p>
-                                        </div>
-                                    ))}
-                                </div>
-                            )}
-                        </div>
-
-                        <ClubCharterActivityClient
-                            charters={userCharters}
-                            currentPage={charterPage}
-                            itemsPerPage={ITEMS_PER_PAGE}
-                            currentUserId={String(user._id)}
-                        />
-                    </section>
+                    <StudentDashboardClient
+                        studentEvents={studentEvents}
+                        memberClubs={memberClubs}
+                        userCharters={userCharters}
+                        recentAnnouncements={recentAnnouncements}
+                        clubPage={clubPage}
+                        eventPage={eventPage}
+                        charterPage={charterPage}
+                        currentUser={String(user._id)}
+                        itemsPerPage={ITEMS_PER_PAGE}
+                    />
                 ) : null}
 
                 {role === "Admin" ? (
-                    <section className="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-slate-200 dark:bg-slate-900 dark:ring-slate-700">
-                        <h2 className="text-xl font-semibold text-slate-950 dark:text-white">Admin controls</h2>
-                        <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">Quick access to the tools you need to moderate clubs, review flagged content, and approve new charters.</p>
-                        <div className="mt-6 grid gap-4 sm:grid-cols-3">
-                            <Link href="/dashboard/flags" className="rounded-3xl bg-amber-500 px-4 py-5 text-center text-sm font-semibold text-slate-950 transition hover:bg-amber-400">Flagged Content</Link>
-                            <Link href="/dashboard/new-club-charters" className="rounded-3xl bg-cyan-500 px-4 py-5 text-center text-sm font-semibold text-slate-950 transition hover:bg-cyan-400">New Club Charters</Link>
-                            <Link href="/dashboard/clubs" className="rounded-3xl bg-emerald-500 px-4 py-5 text-center text-sm font-semibold text-slate-950 transition hover:bg-emerald-400">Manage Clubs</Link>
+                    <div className="relative rounded-[2rem] border border-[#d4b18b]/40 bg-[#f9f2e4] p-8 shadow-[0_25px_65px_-30px_rgba(15,23,42,0.75)]">
+                        <h2 className="text-2xl font-semibold text-slate-950">Admin Dashboard</h2>
+                        <p className="mt-2 text-slate-700">Quick access to the tools you need to moderate clubs, review flagged content, and approve new charters.</p>
+                        <div className="mt-8 grid gap-6 sm:grid-cols-3">
+                            <Link href="/dashboard/admin/flagged-content" className="rounded-[1.8rem] border border-[#d4b18b]/40 bg-[#fff5e4] p-6 text-center font-semibold text-slate-950 transition hover:bg-[#f8e7ce] hover:border-[#d4b18b]/60">
+                                🚩 Flagged Content
+                            </Link>
+                            <Link href="/dashboard/new-club-charters" className="rounded-[1.8rem] border border-[#d4b18b]/40 bg-[#fff5e4] p-6 text-center font-semibold text-slate-950 transition hover:bg-[#f8e7ce] hover:border-[#d4b18b]/60">
+                                📋 New Club Charters
+                            </Link>
+                            <Link href="/dashboard/clubs" className="rounded-[1.8rem] border border-[#d4b18b]/40 bg-[#fff5e4] p-6 text-center font-semibold text-slate-950 transition hover:bg-[#f8e7ce] hover:border-[#d4b18b]/60">
+                                🏢 Manage Clubs
+                            </Link>
                         </div>
-                    </section>
+                    </div>
                 ) : null}
 
                 {role === "ClubOwner" ? (
-                    <section className="space-y-6">
-                        <div className="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-slate-200 dark:bg-slate-900 dark:ring-slate-700">
-                            <div className="flex items-center justify-between gap-4">
-                                <div>
-                                    <h2 className="text-xl font-semibold text-slate-950 dark:text-white">Clubs you manage</h2>
-                                    <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">Navigate directly to club management for each club you own.</p>
-                                </div>
-                            </div>
+                    <div className="space-y-6">
+                        <div className="relative rounded-[2rem] border border-[#d4b18b]/40 bg-[#f9f2e4] p-8 shadow-[0_25px_65px_-30px_rgba(15,23,42,0.75)]">
+                            <h2 className="text-2xl font-semibold text-slate-950">Clubs you manage</h2>
+                            <p className="mt-2 text-slate-700">Navigate directly to club management for each club you own.</p>
 
                             {ownedClubs.length === 0 ? (
-                                <div className="mt-6 rounded-3xl border border-slate-200 bg-slate-50 p-6 text-slate-600 dark:border-slate-800 dark:bg-slate-950 dark:text-slate-300">You are not currently assigned to manage any clubs.</div>
+                                <div className="mt-6 rounded-[1.8rem] border border-[#d4b18b]/40 bg-[#fff5e4] p-6 text-center text-slate-700">
+                                    You are not currently assigned to manage any clubs.
+                                </div>
                             ) : (
                                 <>
                                     <div className="mt-6 space-y-4">
                                         {ownedClubs.slice(clubPageStart, clubPageStart + ITEMS_PER_PAGE).map((club) => (
-                                            <div key={club._id} className="rounded-3xl border border-slate-200 bg-slate-50 p-4 dark:border-slate-800 dark:bg-slate-950">
-                                                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                                            <div key={club._id} className="rounded-[1.8rem] border border-[#d4b18b]/40 bg-[#fff5e4] p-6 shadow-md shadow-[#b9955d]/10">
+                                                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                                                     <div>
-                                                        <h3 className="text-lg font-semibold text-slate-950 dark:text-white">{club.name || "Unnamed Club"}</h3>
-                                                        <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">{club.description || "No description available."}</p>
+                                                        <h3 className="text-lg font-semibold text-slate-950">{club.name || "Unnamed Club"}</h3>
+                                                        <p className="mt-2 text-sm text-slate-700">{club.description || "No description available."}</p>
                                                     </div>
-                                                    <Link href={`/dashboard/clubs/${club._id}`} className="rounded-full bg-slate-950 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-950 dark:hover:bg-slate-200">Manage club</Link>
+                                                    <Link href={`/dashboard/clubs/${club._id}`} className="rounded-full bg-[#e05c5c] px-6 py-3 text-sm font-semibold text-white transition hover:bg-[#c94a4a] whitespace-nowrap">
+                                                        Manage club
+                                                    </Link>
                                                 </div>
                                             </div>
                                         ))}
                                     </div>
                                     {ownedClubPages > 1 ? (
-                                        <div className="mt-6 flex items-center justify-between rounded-3xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-600 dark:border-slate-800 dark:bg-slate-950 dark:text-slate-300">
+                                        <div className="mt-6 flex items-center justify-between rounded-[1.8rem] border border-[#d4b18b]/40 bg-[#fff5e4] p-4 text-sm text-slate-700">
                                             <Link
                                                 href={`/dashboard?clubPage=${Math.max(1, clubPage - 1)}&eventPage=${eventPage}`}
-                                                className={`rounded-full px-4 py-2 transition ${clubPage === 1 ? "bg-slate-200 text-slate-400 cursor-not-allowed" : "bg-slate-950 text-white hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-950 dark:hover:bg-slate-200"}`}
+                                                className={`rounded-full px-4 py-2 transition ${clubPage === 1 ? "bg-slate-200 text-slate-400 cursor-not-allowed" : "bg-[#e05c5c] text-white hover:bg-[#c94a4a]"}`}
                                             >
                                                 Previous
                                             </Link>
-                                            <span>Page {clubPage} of {ownedClubPages}</span>
+                                            <span className="font-semibold">Page {clubPage} of {ownedClubPages}</span>
                                             <Link
                                                 href={`/dashboard?clubPage=${Math.min(ownedClubPages, clubPage + 1)}&eventPage=${eventPage}`}
-                                                className={`rounded-full px-4 py-2 transition ${clubPage === ownedClubPages ? "bg-slate-200 text-slate-400 cursor-not-allowed" : "bg-slate-950 text-white hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-950 dark:hover:bg-slate-200"}`}
+                                                className={`rounded-full px-4 py-2 transition ${clubPage === ownedClubPages ? "bg-slate-200 text-slate-400 cursor-not-allowed" : "bg-[#e05c5c] text-white hover:bg-[#c94a4a]"}`}
                                             >
                                                 Next
                                             </Link>
@@ -233,9 +251,9 @@ export default async function Dashboard({ searchParams }) {
                                 </>
                             )}
                         </div>
-                    </section>
+                    </div>
                 ) : null}
-            </main>
-        </div>
+            </div>
+        </main>
     );
 }

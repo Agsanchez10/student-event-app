@@ -21,12 +21,15 @@ export async function DELETE(req, { params }) {
     const token = tokenMatch ? tokenMatch[1] : null;
     const user = await getCurrentUser(token);
 
+    const paramData = await params;
+    const charterId = paramData.charterid;
+
     if (!user) {
         return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     try {
-        await deleteClubCharter(params.charterid, user._id);
+        await deleteClubCharter(charterId, user._id);
         return NextResponse.json({ success: true }, { status: 200 });
     } catch (error) {
         const message = error?.message || "Unable to delete charter.";

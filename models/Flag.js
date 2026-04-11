@@ -2,12 +2,16 @@ import mongoose from "mongoose";
 
 const FlagSchema = new mongoose.Schema({
     _id: { type: Number, required: true },
-    ownderId: { type: Number, ref: "User" },
-    posterId: { type: Number, ref: "User" },
-    notes: String,
+    flaggedById: { type: Number, ref: "User", required: true },
+    contentId: { type: Number, required: true },
+    type: { type: String, enum: ["user", "club", "announcement", "event"], required: true },
+    reason: { type: String, enum: ["spam", "harassment", "inappropriate", "misinformation", "other"], required: true },
+    description: String,
     isResolved: { type: Boolean, default: false },
+    resolvedBy: { type: Number, ref: "User" },
+    resolution: String,
+    adminNotes: String,
     dateResolved: Date,
-    type: { type: String, enum: ["user", "club", "announcement", "event"], required: true },    
     reportedAt: {
         type: Date,
         default: Date.now,

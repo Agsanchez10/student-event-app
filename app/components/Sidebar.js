@@ -1,25 +1,51 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useRouter } from "next/navigation";
 
-
-
-
 export default function Sidebar({ isOpen, onToggle }) {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userRole, setUserRole] = useState(null);
   const router = useRouter();
   const pathname = usePathname();
   
-  const links = [
-    { href: "/dashboard", label: "Dashboard", icon: "🏠" },
-    { href: "/dashboard/events", label: "Events", icon: "📅" },
-    { href: "/dashboard/clubs", label: "Clubs", icon: "👥" },
-    { href: "/dashboard/club-charter", label: "Club Charter", icon: "📝" },
-    { href: "/dashboard/pending-charters", label: "Pending Charters", icon: "⏳" },
+  const allLinks = [
+    { href: "/dashboard", label: "Dashboard", icon: "🏠", roles: ["Student", "Admin", "ClubOwner"] },
+    { href: "/dashboard/events", label: "Events", icon: "📅", roles: ["Student", "Admin"] },
+    { href: "/dashboard/clubs", label: "Clubs", icon: "👥", roles: ["Student", "Admin", "ClubOwner"] },
+    { href: "/dashboard/club-charter", label: "Club Charter", icon: "📝", roles: ["Student", "Admin"] },
+    { href: "/dashboard/pending-charters", label: "Pending Charters", icon: "⏳", roles: ["Student", "Admin"] },
   ];
+
+  useEffect(() => {
+    // Fetch user role
+    const fetchUserRole = async () => {
+      try {
+        const res = await fetch("/api/auth/check", { method: "GET" });
+        if (res.ok) {
+          setIsLoggedIn(true);
+          // Get user data from cookie or session
+          const userRes = await fetch("/api/users/current", { method: "GET" });
+          if (userRes.ok) {
+            const userData = await userRes.json();
+            setUserRole(userData.role);
+          }
+        } else {
+          setIsLoggedIn(false);
+        }
+      } catch (error) {
+        console.error("Error fetching user role:", error);
+      }
+    };
+
+    fetchUserRole();
+  }, []);
+
+  const filteredLinks = allLinks.filter(link => 
+    !userRole || link.roles.includes(userRole)
+  );
 
   const handleLogout = async () => {
     try {
@@ -34,7 +60,6 @@ export default function Sidebar({ isOpen, onToggle }) {
       console.error("Logout error:", error);
     }
   };
-
 
   return (
     <>      {/* Toggle button */}
@@ -75,7 +100,7 @@ export default function Sidebar({ isOpen, onToggle }) {
           {/* Links */}
           <nav className="flex-1 p-4">
             <ul className="space-y-2">
-              {links.map((link) => (
+              {filteredLinks.map((link) => (
                 <li key={link.href}>
                   <Link
                     href={link.href}

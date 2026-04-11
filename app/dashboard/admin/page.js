@@ -150,10 +150,10 @@ export default function CollegeAdminDashboard() {
                     <span className="text-3xl">🚩</span>
                   </div>
                   <Link 
-                    href="/dashboard/flags" 
+                    href="/dashboard/admin/flagged-content" 
                     className="mt-4 inline-flex items-center justify-center rounded-lg bg-[#e05c5c] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#c94a4a]"
                   >
-                    View Flags
+                    Review Flagged Content
                   </Link>
                 </div>
               </div>

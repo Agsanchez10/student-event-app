@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
+import { useEffect } from "react";
 
 const formatDate = (value) => {
     if (!value) return "TBD";
@@ -33,6 +34,25 @@ export default function PendingChartersClient({ charters = [], currentUser }) {
     const [isSigningId, setIsSigningId] = useState(null);
     const [isRemovingSignatureId, setIsRemovingSignatureId] = useState(null);
     const [chartersState, setChartersState] = useState(charters);
+    const [ownerNameCache, setOwnerNameCache] = useState({});
+    const [isDeletingId, setIsDeletingId] = useState(null);
+    
+    
+
+    useEffect(() => {
+        if (selectedCharter) {
+            getOwnerName(selectedCharter.initiatorId).then(name => {
+                setOwnerNameCache(prevCache => ({
+                    ...prevCache,
+                    [selectedCharter.initiatorId]: name
+                }));
+
+            }
+            );
+            console.log(`Fetched owner name for user ID ${selectedCharter.initiatorId}: ${ownerNameCache[selectedCharter.initiatorId]}`);
+        }
+    }, [selectedCharter]);
+
 
     const sortedCharters = useMemo(() => {
         const sorted = [...chartersState];
@@ -83,7 +103,7 @@ export default function PendingChartersClient({ charters = [], currentUser }) {
     };
 
     const handleRemoveSignature = async (charterId) => {
-        if (!currentUser) return;
+        if (!currentUser) return;        
 
         setIsRemovingSignatureId(charterId);
 
@@ -112,6 +132,63 @@ export default function PendingChartersClient({ charters = [], currentUser }) {
             setIsRemovingSignatureId(null);
         }
     };
+
+     const handleDelete = async (charterId) => {
+        const confirmed = window.confirm("Are you sure you want to cancel this charter? This action cannot be undone.");
+        if (!confirmed) return;
+
+        setIsDeletingId(charterId);
+
+        try {
+        const response = await fetch(`/api/club-charters/${charterId}`, {
+            method: "DELETE",
+        });
+
+        setIsDeletingId(null);
+
+        if (response.ok) {
+            setSelectedCharter(null);
+            setChartersState((current) => current.filter((charter) => String(charter._id) !== String(charterId)));
+            
+        } else {
+            const error = await response.json();
+            console.error("Unable to cancel charter:", error);
+            window.alert("Failed to cancel charter. Please try again.");
+        }
+        } catch (error) {
+            setIsDeletingId(null);
+            console.error("An error occurred while cancelling the charter:", error);
+            window.alert("An unexpected error occurred. Please try again.");
+        } finally {
+            setIsDeletingId(null);
+        }
+
+    };
+
+    const getOwnerName = async (initiatorId) => {
+         try {
+            const response = await fetch(`/api/users/${initiatorId}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            });
+
+            if(!response.ok) {
+                throw new Error('Failed to fetch owner name');
+            }
+
+            const user = await response.json();
+            const name = user.firstName + " " + user.lastName;
+            console.log(`Fetched owner name for user ID ${initiatorId}: ${name}`);
+            return name || "TBD";
+        }
+         catch (error) {
+            console.error('An error occurred while fetching the owner name', error);
+            return "TBD";
+        }
+        
+    }
 
     const totalPages = Math.max(1, Math.ceil(sortedCharters.length / ITEMS_PER_PAGE));
     const displayedCharters = sortedCharters.slice(
@@ -171,7 +248,7 @@ export default function PendingChartersClient({ charters = [], currentUser }) {
                                     <div className="space-y-2 text-xs text-slate-600 mb-4">
                                         <p><span className="font-semibold">Created:</span> {formatDate(charter.createdAt)}</p>
                                         <p><span className="font-semibold">Signatures:</span> {charter.signatures?.length || 0}</p>
-                                        <p><span className="font-semibold">Proposed Owner:</span> {charter.proposedOwner || "TBD"}</p>
+                                        <p><span className="font-semibold">Proposed Owner:</span> {ownerNameCache[charter.initiatorId] || "TBD"}</p>
                                     </div>
                                     
                                     <button
@@ -253,7 +330,7 @@ export default function PendingChartersClient({ charters = [], currentUser }) {
                                 </div>
                                 <div className="rounded-3xl bg-[#fff7e4] p-5 text-sm text-slate-700">
                                     <p className="font-semibold text-slate-900">Proposed Owner</p>
-                                    <p className="mt-2">{selectedCharter.proposedOwner || "TBD"}</p>
+                                    <p className="mt-2">{ownerNameCache[selectedCharter.initiatorId] || "TBD"}</p>
                                 </div>
                             </div>
                             <div>
@@ -264,7 +341,7 @@ export default function PendingChartersClient({ charters = [], currentUser }) {
                             <div>
                                 <p className="text-sm font-semibold text-[#8a5f3a] mb-3">Actions</p>
                                 <div className="flex flex-col gap-3">
-                                    {!userHasSigned(selectedCharter) ? (
+                                    {!userHasSigned(selectedCharter) && ( 
                                         <button
                                             onClick={() => handleSignCharter(selectedCharter._id)}
                                             disabled={isSigningId === selectedCharter._id}
@@ -272,7 +349,18 @@ export default function PendingChartersClient({ charters = [], currentUser }) {
                                         >
                                             {isSigningId === selectedCharter._id ? 'Signing...' : '✓ Sign Charter'}
                                         </button>
-                                    ) : (
+                                    )}
+                                    {currentUser && String(selectedCharter.initiatorId) === String(currentUser._id) && (
+                                        <button
+                                                type="button"
+                                                disabled={isDeletingId === selectedCharter._id}
+                                                onClick={() => handleDelete(selectedCharter._id)}
+                                                className="rounded-full bg-rose-500 px-4 py-2 text-xs font-semibold text-white transition hover:bg-rose-400 disabled:cursor-not-allowed disabled:opacity-60"
+                                            >
+                                                {isDeletingId === selectedCharter._id ? "Cancelling..." : "Cancel charter"}
+                                            </button>
+                                    )}
+                                    {currentUser && String(selectedCharter.initiatorId) !== String(currentUser._id) && (
                                         <button
                                             onClick={() => handleRemoveSignature(selectedCharter._id)}
                                             disabled={isRemovingSignatureId === selectedCharter._id}
@@ -280,7 +368,7 @@ export default function PendingChartersClient({ charters = [], currentUser }) {
                                         >
                                             {isRemovingSignatureId === selectedCharter._id ? 'Removing...' : '✕ Remove Signature'}
                                         </button>
-                                    )}
+                                    )}                                    
                                 </div>
                             </div>
                         </div>

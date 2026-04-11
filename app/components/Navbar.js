@@ -1,5 +1,6 @@
 "use client";
 import Image from "next/image";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
@@ -90,10 +91,17 @@ export default function Navbar() {
             {isLoggedIn ? (
               <button onClick={handleLogout} label="logout-button" className="nav-link">Logout</button>
             ) : (
-              <button onClick={() => setShowLogin(true)} label="login-button" className="nav-link">Login</button>
+              <>
+                <button onClick={() => setShowLogin(true)} label="login-button" className="nav-link">Login</button>
+              </>
             )}            
             
           </li>
+          {!isLoggedIn && (
+            <li className="register-link">
+              <Link href="/register" className="nav-link">Register</Link>
+            </li>
+          )}
         </ul>
       </div>
    
@@ -166,6 +174,9 @@ export default function Navbar() {
                    </div>
                    <div className="text-sm text-center">
                      {error && <p className="text-red-500">{error}</p>}
+                   </div>
+                   <div className="text-sm text-center mt-4">
+                     <p className="text-gray-600">Don't have an account? <Link href="/register" className="text-[#e12b53] font-medium hover:text-[#c91f4a]">Register here</Link></p>
                    </div>
                 </form>
             </div>

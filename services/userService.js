@@ -31,8 +31,33 @@ export const deleteUser = withDB(async (body) => {
 });
     
 
-export const updateUser = withDB(async (body) => {
-    const user = await User.findByIdAndUpdate(body.id, body, { new: true });
+export const updateUser = withDB(async (userid, body) => {
+    
+    if(body.ownedClubs) {
+        const user = await User.findByIdAndUpdate(
+            userid, 
+            { $push: { ownedClubs: { $each: body.ownedClubs } } },
+            { returnDocument: "after", strict: false }
+        );
+        if(!user) {
+            throw new Error("404: User not found");
+        }
+        return user;
+    }  
+    else if(body.clubMemberships) {
+        const user = await User.findByIdAndUpdate(
+            userid,
+            { $push: { clubMemberships: { $each: body.clubMemberships } } },
+            { returnDocument: "after", strict: false }
+        );
+        if(!user) {
+            throw new Error("404: User not found");
+        }
+        return user;
+    }  
+
+    
+    const user = await User.findByIdAndUpdate(userid, body, { returnDocument: "after" });    
     if (!user) {
         throw new Error("404: User not found");
     }
