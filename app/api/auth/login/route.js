@@ -9,12 +9,23 @@ export async function POST(req) {
             return NextResponse.json({ error: "Email and password are required" }, { status: 400 });
         }
 
-        const token = await authenticateUser(email, password);
+        const result = await authenticateUser(email, password);
 
-        if (!token) {
+        if (!result) {
             return NextResponse.json({ error: "Invalid email or password" }, { status: 401 });
         }
-        const response = NextResponse.json({ message: "Login successful" }, { status: 200 });
+
+        const { token, user } = result;
+
+        const response = NextResponse.json(
+            { 
+                message: "Login successful",
+                user: {
+                    id: user.id,
+                    email: user.email,
+                    role: user.role,                    
+                }
+            }, { status: 200 });
 
         response.cookies.set("token", token, {
             httpOnly: true,

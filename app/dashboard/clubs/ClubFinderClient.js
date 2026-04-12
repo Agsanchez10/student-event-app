@@ -47,6 +47,10 @@ export default function ClubFinderClient({
         }
     };
 
+
+    
+
+
     // Handle applying for private club
     const handleApplyForClub = (club) => {
         setSelectedClub(club);

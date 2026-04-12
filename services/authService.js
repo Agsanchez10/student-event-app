@@ -12,10 +12,18 @@ export const authenticateUser = withDB(async (email, password) => {
     if (!isMatch) {
         return null;
     }
+
     const token = jwt.sign(
-        { id: user._id, email: user.email },
+        { id: user._id, email: user.email, role: user.role},
         process.env.JWT_SECRET,
-        { expiresIn: "1h" }
+        { expiresIn: "7d" } 
     );
-    return token;
+
+    return { 
+        token, 
+        user: {
+            id: user._id,
+            email: user.email,
+            role: user.role,            
+        } };
 });

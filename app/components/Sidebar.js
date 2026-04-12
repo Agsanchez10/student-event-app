@@ -12,11 +12,15 @@ export default function Sidebar({ isOpen, onToggle }) {
   const pathname = usePathname();
   
   const allLinks = [
-    { href: "/dashboard", label: "Dashboard", icon: "🏠", roles: ["Student", "Admin", "ClubOwner"] },
-    { href: "/dashboard/events", label: "Events", icon: "📅", roles: ["Student", "Admin"] },
-    { href: "/dashboard/clubs", label: "Clubs", icon: "👥", roles: ["Student", "Admin", "ClubOwner"] },
-    { href: "/dashboard/club-charter", label: "Club Charter", icon: "📝", roles: ["Student", "Admin"] },
-    { href: "/dashboard/pending-charters", label: "Pending Charters", icon: "⏳", roles: ["Student", "Admin"] },
+    { href: "/dashboard", label: "Dashboard", icon: "🏠", roles: ["Student", "CollegeAdmin", "ClubOwner"] },
+    { href: "/dashboard/events", label: "Events", icon: "📅", roles: ["Student"] },
+    { href: "/dashboard/clubs", label: "Clubs", icon: "👥", roles: ["Student", "ClubOwner"] },
+    { href: "/dashboard/club-charter", label: "Club Charter", icon: "📝", roles: ["Student"] },
+    { href: "/dashboard/pending-charters", label: "Pending Charters", icon: "⏳", roles: ["Student", "CollegeAdmin"] },
+    { href: "/system-admin", label: "Dashboard", icon: "🏠", roles: ["SystemAdmin"] },
+    { href: "/system-admin/manage-admins", label: "Manage Admins", icon: "👤", roles: ["SystemAdmin"] },
+    { href: "/system-admin/manage-users", label: "Manage Users", icon: "🏫", roles: ["SystemAdmin"] },
+    { href: "/system-admin/account-security", label: "Account Security", icon: "🔒", roles: ["SystemAdmin"] },
   ];
 
   useEffect(() => {

@@ -14,7 +14,13 @@ const UserSchema = new mongoose.Schema(
         lastName: { type: String, required: true, trim: true },
         email: { type: String, required: true, unique: true, lowercase: true, trim: true },
         password: { type: String, required: true }, //, minlength: 6 },
-        role: { type: String, enum: ["Student", "Admin", "ClubOwner"], default: "Student", required: true },            
+        role: { type: String, enum: ["Student", "CollegeAdmin", "SystemAdmin", "ClubOwner"], default: "Student", required: true },
+        // Password reset fields
+        resetToken: { type: String, default: null },
+        resetTokenExpiry: { type: Date, default: null },
+        // One-time password for password reset
+        otp: { type: String, default: null },
+        otpExpiry: { type: Date, default: null },
     }, baseOptions
 );
 
@@ -37,20 +43,25 @@ export const Student = mongoose.models.Student ??
         })
     );
 
-// admin fields
-export const Admin = mongoose.models.Admin ??
+// CollegeAdmin fields
+export const CollegeAdmin = mongoose.models.CollegeAdmin ??
     User.discriminator(
-        "Admin", 
-        new mongoose.Schema({
-            adminType: { 
-                type: String, 
-                enum: ["SystemAdmin", "CollegeAdmin"], 
-                default: "CollegeAdmin"
-            },
+        "CollegeAdmin", 
+        new mongoose.Schema({            
             isActive: { type: Boolean, default: true },
             pastActions: [{ type: String }]
         })
     );
+
+// SystemAdmin fields
+export const SystemAdmin = mongoose.models.SystemAdmin ??
+    User.discriminator(
+        "SystemAdmin",
+        new mongoose.Schema({
+            isActive: { type: Boolean, default: true },
+            pastActions: [{ type: String }]
+        })
+    );  
 
 // club owner fields
 export  const ClubOwner = mongoose.models.ClubOwner ??

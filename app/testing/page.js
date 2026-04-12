@@ -26,7 +26,7 @@ export default function TestingPage() {
                 { href: '/dashboard', label: 'Main Dashboard' },
                 { href: '/dashboard/student', label: 'Student Dashboard' },
                 { href: '/dashboard/admin', label: 'College Admin Dashboard' },
-                { href: '/dashboard/system-admin', label: 'System Admin Dashboard' },
+                { href: '/system-admin', label: 'System Admin Dashboard' },
                 { href: '/dashboard/clubs', label: 'Manage Clubs' },
                 { href: '/dashboard/club-charter', label: 'Club Charter' },
                 { href: '/dashboard/events', label: 'Events' },

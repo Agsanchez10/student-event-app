@@ -23,13 +23,24 @@ export default function LoginClient() {
                 setError(`Login failed: ${errorData.error}`);
                 return;
             }
+
+            const data = await res.json();
+
+            if(data.user?.role === "SystemAdmin") {
+                router.push("/system-admin");
+            return;
+            }
+                        
             router.push("/dashboard");
+
+            console.log("Login successful:", data);
         } catch (error) {
             console.error("Login error:", error);
             setError("An error occurred during login.");
         }
     };
 
+    
     return (
         <div className="min-h-[75vh] flex items-center justify-center ">
             <div className="w-full max-w-md rounded-3xl bg-white p-8 shadow-sm ring-1 ring-slate-200 dark:bg-slate-900 dark:ring-slate-700">

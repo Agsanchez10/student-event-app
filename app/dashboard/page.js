@@ -80,6 +80,8 @@ export default async function Dashboard({ searchParams }) {
     }
 
     const role = user.role;
+    if(role === "Admin") { var adminType = user.adminType; }
+
     const eventPage = parseInt(params?.eventPage ?? "1", 10) || 1;
     const clubPage = parseInt(params?.clubPage ?? "1", 10) || 1;
     const eventPageStart = (eventPage - 1) * ITEMS_PER_PAGE;
@@ -159,7 +161,7 @@ export default async function Dashboard({ searchParams }) {
                                     <Link href="/dashboard/new-club-charters" className="rounded-full bg-[#d4975a] px-6 py-3 text-sm font-semibold text-white transition hover:bg-[#b8805f]">
                                         New Club Charters
                                     </Link>
-                                    <Link href="/dashboard/clubs" className="rounded-full bg-[#c8a882] px-6 py-3 text-sm font-semibold text-white transition hover:bg-[#a68963]">
+                                    <Link href="/dashboard/clubs/manage" className="rounded-full bg-[#c8a882] px-6 py-3 text-sm font-semibold text-white transition hover:bg-[#a68963]">
                                         Manage clubs
                                     </Link>
                                 </>
@@ -186,7 +188,7 @@ export default async function Dashboard({ searchParams }) {
                     />
                 ) : null}
 
-                {role === "Admin" ? (
+                {role === "Admin" && adminType === "CollegeAdmin" ? (
                     <div className="relative rounded-[2rem] border border-[#d4b18b]/40 bg-[#f9f2e4] p-8 shadow-[0_25px_65px_-30px_rgba(15,23,42,0.75)]">
                         <h2 className="text-2xl font-semibold text-slate-950">Admin Dashboard</h2>
                         <p className="mt-2 text-slate-700">Quick access to the tools you need to moderate clubs, review flagged content, and approve new charters.</p>
@@ -197,7 +199,7 @@ export default async function Dashboard({ searchParams }) {
                             <Link href="/dashboard/new-club-charters" className="rounded-[1.8rem] border border-[#d4b18b]/40 bg-[#fff5e4] p-6 text-center font-semibold text-slate-950 transition hover:bg-[#f8e7ce] hover:border-[#d4b18b]/60">
                                 📋 New Club Charters
                             </Link>
-                            <Link href="/dashboard/clubs" className="rounded-[1.8rem] border border-[#d4b18b]/40 bg-[#fff5e4] p-6 text-center font-semibold text-slate-950 transition hover:bg-[#f8e7ce] hover:border-[#d4b18b]/60">
+                            <Link href="/dashboard/clubs/manage" className="rounded-[1.8rem] border border-[#d4b18b]/40 bg-[#fff5e4] p-6 text-center font-semibold text-slate-950 transition hover:bg-[#f8e7ce] hover:border-[#d4b18b]/60">
                                 🏢 Manage Clubs
                             </Link>
                         </div>

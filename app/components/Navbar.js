@@ -38,19 +38,25 @@ export default function Navbar() {
         return;
       } 
       
+      const data = await res.json();
+
       setIsLoggedIn(true);
       setShowLogin(false);
 
-      
-      window.location.href = "/dashboard";
+      if(data.user?.role === "SystemAdmin") {
+        window.location.href = "/system-admin";
+        return;
+      }
+  
+       window.location.href = "/dashboard";
 
     } catch (error) {
       console.error("Login error:", error);
       setError("An error occurred during login.");
-    } finally {
-      setIsLoading(false);
     }
   };
+
+ 
 
   const handleLogout = async () => {
     try {
