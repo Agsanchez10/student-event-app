@@ -1,0 +1,562 @@
+[
+  {
+    "_id": 1,
+    "ownerId": 24,
+    "title": "Congratulations \u2014 1",
+    "description": "This is an important announcement for all club members. Please read carefully and share with others.",
+    "clubID": 14,
+    "createdAt": "2025-08-16T23:21:18.000Z"
+  },
+  {
+    "_id": 2,
+    "ownerId": 26,
+    "title": "Join Us \u2014 2",
+    "description": "This is an important announcement for all club members. Please read carefully and share with others.",
+    "clubID": 16,
+    "createdAt": "2025-09-21T19:01:18.000Z"
+  },
+  {
+    "_id": 3,
+    "ownerId": 11,
+    "title": "Join Us \u2014 3",
+    "description": "This is an important announcement for all club members. Please read carefully and share with others.",
+    "clubID": 28,
+    "createdAt": "2026-04-07T09:59:18.000Z"
+  },
+  {
+    "_id": 4,
+    "ownerId": 22,
+    "title": "Welcome \u2014 4",
+    "description": "This is an important announcement for all club members. Please read carefully and share with others.",
+    "clubID": 12,
+    "createdAt": "2026-03-15T06:24:18.000Z"
+  },
+  {
+    "_id": 5,
+    "ownerId": 17,
+    "title": "Special Guest \u2014 5",
+    "description": "This is an important announcement for all club members. Please read carefully and share with others.",
+    "clubID": 7,
+    "createdAt": "2025-08-26T12:43:18.000Z"
+  },
+  {
+    "_id": 6,
+    "ownerId": 34,
+    "title": "Important Update \u2014 6",
+    "description": "This is an important announcement for all club members. Please read carefully and share with others.",
+    "clubID": 24,
+    "createdAt": "2025-06-25T12:57:18.000Z"
+  },
+  {
+    "_id": 7,
+    "ownerId": 32,
+    "title": "Recap \u2014 7",
+    "description": "This is an important announcement for all club members. Please read carefully and share with others.",
+    "clubID": 22,
+    "createdAt": "2025-10-01T04:20:18.000Z"
+  },
+  {
+    "_id": 8,
+    "ownerId": 34,
+    "title": "Important Update \u2014 8",
+    "description": "This is an important announcement for all club members. Please read carefully and share with others.",
+    "clubID": 24,
+    "createdAt": "2025-08-13T21:26:18.000Z"
+  },
+  {
+    "_id": 9,
+    "ownerId": 31,
+    "title": "Congratulations \u2014 9",
+    "description": "This is an important announcement for all club members. Please read carefully and share with others.",
+    "clubID": 26,
+    "createdAt": "2026-02-22T05:15:18.000Z"
+  },
+  {
+    "_id": 10,
+    "ownerId": 31,
+    "title": "Important Update \u2014 10",
+    "description": "This is an important announcement for all club members. Please read carefully and share with others.",
+    "clubID": 21,
+    "createdAt": "2025-10-09T08:48:18.000Z"
+  },
+  {
+    "_id": 11,
+    "ownerId": 26,
+    "title": "Recap \u2014 11",
+    "description": "This is an important announcement for all club members. Please read carefully and share with others.",
+    "clubID": 16,
+    "createdAt": "2026-02-22T09:18:18.000Z"
+  },
+  {
+    "_id": 12,
+    "ownerId": 24,
+    "title": "Resources Available \u2014 12",
+    "description": "This is an important announcement for all club members. Please read carefully and share with others.",
+    "clubID": 14,
+    "createdAt": "2025-06-20T15:08:18.000Z"
+  },
+  {
+    "_id": 13,
+    "ownerId": 11,
+    "title": "Upcoming Meeting \u2014 13",
+    "description": "This is an important announcement for all club members. Please read carefully and share with others.",
+    "clubID": 28,
+    "createdAt": "2025-05-03T21:54:18.000Z"
+  },
+  {
+    "_id": 14,
+    "ownerId": 14,
+    "title": "Member Spotlight \u2014 14",
+    "description": "This is an important announcement for all club members. Please read carefully and share with others.",
+    "clubID": 27,
+    "createdAt": "2025-10-11T19:52:18.000Z"
+  },
+  {
+    "_id": 15,
+    "ownerId": 16,
+    "title": "Reminder \u2014 15",
+    "description": "This is an important announcement for all club members. Please read carefully and share with others.",
+    "clubID": 6,
+    "createdAt": "2025-04-25T07:23:18.000Z"
+  },
+  {
+    "_id": 16,
+    "ownerId": 31,
+    "title": "Reminder \u2014 16",
+    "description": "This is an important announcement for all club members. Please read carefully and share with others.",
+    "clubID": 21,
+    "createdAt": "2026-01-14T02:17:18.000Z"
+  },
+  {
+    "_id": 17,
+    "ownerId": 19,
+    "title": "Member Spotlight \u2014 17",
+    "description": "This is an important announcement for all club members. Please read carefully and share with others.",
+    "clubID": 9,
+    "createdAt": "2026-04-01T05:23:18.000Z"
+  },
+  {
+    "_id": 18,
+    "ownerId": 24,
+    "title": "Resources Available \u2014 18",
+    "description": "This is an important announcement for all club members. Please read carefully and share with others.",
+    "clubID": 14,
+    "createdAt": "2025-05-11T19:11:18.000Z"
+  },
+  {
+    "_id": 19,
+    "ownerId": 19,
+    "title": "Recap \u2014 19",
+    "description": "This is an important announcement for all club members. Please read carefully and share with others.",
+    "clubID": 9,
+    "createdAt": "2025-06-18T20:06:18.000Z"
+  },
+  {
+    "_id": 20,
+    "ownerId": 20,
+    "title": "Join Us \u2014 20",
+    "description": "This is an important announcement for all club members. Please read carefully and share with others.",
+    "clubID": 10,
+    "createdAt": "2025-06-24T09:50:18.000Z"
+  },
+  {
+    "_id": 21,
+    "ownerId": 11,
+    "title": "Congratulations \u2014 21",
+    "description": "This is an important announcement for all club members. Please read carefully and share with others.",
+    "clubID": 30,
+    "createdAt": "2025-10-20T17:34:18.000Z"
+  },
+  {
+    "_id": 22,
+    "ownerId": 17,
+    "title": "Special Guest \u2014 22",
+    "description": "This is an important announcement for all club members. Please read carefully and share with others.",
+    "clubID": 7,
+    "createdAt": "2025-05-14T13:36:18.000Z"
+  },
+  {
+    "_id": 23,
+    "ownerId": 11,
+    "title": "Congratulations \u2014 23",
+    "description": "This is an important announcement for all club members. Please read carefully and share with others.",
+    "clubID": 29,
+    "createdAt": "2025-04-20T13:48:18.000Z"
+  },
+  {
+    "_id": 24,
+    "ownerId": 30,
+    "title": "Join Us \u2014 24",
+    "description": "This is an important announcement for all club members. Please read carefully and share with others.",
+    "clubID": 20,
+    "createdAt": "2026-01-30T08:13:18.000Z"
+  },
+  {
+    "_id": 25,
+    "ownerId": 11,
+    "title": "Recap \u2014 25",
+    "description": "This is an important announcement for all club members. Please read carefully and share with others.",
+    "clubID": 1,
+    "createdAt": "2025-08-20T07:26:18.000Z"
+  },
+  {
+    "_id": 26,
+    "ownerId": 11,
+    "title": "New Event \u2014 26",
+    "description": "This is an important announcement for all club members. Please read carefully and share with others.",
+    "clubID": 28,
+    "createdAt": "2025-11-25T11:40:18.000Z"
+  },
+  {
+    "_id": 27,
+    "ownerId": 11,
+    "title": "Schedule Change \u2014 27",
+    "description": "This is an important announcement for all club members. Please read carefully and share with others.",
+    "clubID": 28,
+    "createdAt": "2025-10-12T02:03:18.000Z"
+  },
+  {
+    "_id": 28,
+    "ownerId": 34,
+    "title": "Reminder \u2014 28",
+    "description": "This is an important announcement for all club members. Please read carefully and share with others.",
+    "clubID": 24,
+    "createdAt": "2025-09-11T11:00:18.000Z"
+  },
+  {
+    "_id": 29,
+    "ownerId": 19,
+    "title": "Resources Available \u2014 29",
+    "description": "This is an important announcement for all club members. Please read carefully and share with others.",
+    "clubID": 9,
+    "createdAt": "2026-03-17T10:04:18.000Z"
+  },
+  {
+    "_id": 30,
+    "ownerId": 11,
+    "title": "Upcoming Meeting \u2014 30",
+    "description": "This is an important announcement for all club members. Please read carefully and share with others.",
+    "clubID": 29,
+    "createdAt": "2025-08-21T23:35:18.000Z"
+  },
+  {
+    "_id": 31,
+    "ownerId": 22,
+    "title": "Recap \u2014 31",
+    "description": "This is an important announcement for all club members. Please read carefully and share with others.",
+    "clubID": 12,
+    "createdAt": "2025-10-14T13:50:18.000Z"
+  },
+  {
+    "_id": 32,
+    "ownerId": 29,
+    "title": "Welcome \u2014 32",
+    "description": "This is an important announcement for all club members. Please read carefully and share with others.",
+    "clubID": 19,
+    "createdAt": "2025-10-19T23:40:18.000Z"
+  },
+  {
+    "_id": 33,
+    "ownerId": 33,
+    "title": "Member Spotlight \u2014 33",
+    "description": "This is an important announcement for all club members. Please read carefully and share with others.",
+    "clubID": 23,
+    "createdAt": "2025-08-18T23:19:18.000Z"
+  },
+  {
+    "_id": 34,
+    "ownerId": 15,
+    "title": "Schedule Change \u2014 34",
+    "description": "This is an important announcement for all club members. Please read carefully and share with others.",
+    "clubID": 5,
+    "createdAt": "2026-04-07T23:54:18.000Z"
+  },
+  {
+    "_id": 35,
+    "ownerId": 11,
+    "title": "Important Update \u2014 35",
+    "description": "This is an important announcement for all club members. Please read carefully and share with others.",
+    "clubID": 30,
+    "createdAt": "2025-10-09T20:07:18.000Z"
+  },
+  {
+    "_id": 36,
+    "ownerId": 26,
+    "title": "Resources Available \u2014 36",
+    "description": "This is an important announcement for all club members. Please read carefully and share with others.",
+    "clubID": 16,
+    "createdAt": "2025-09-05T08:35:18.000Z"
+  },
+  {
+    "_id": 37,
+    "ownerId": 35,
+    "title": "New Event \u2014 37",
+    "description": "This is an important announcement for all club members. Please read carefully and share with others.",
+    "clubID": 25,
+    "createdAt": "2026-01-06T13:41:18.000Z"
+  },
+  {
+    "_id": 38,
+    "ownerId": 30,
+    "title": "Join Us \u2014 38",
+    "description": "This is an important announcement for all club members. Please read carefully and share with others.",
+    "clubID": 20,
+    "createdAt": "2025-07-31T09:45:18.000Z"
+  },
+  {
+    "_id": 39,
+    "ownerId": 30,
+    "title": "New Event \u2014 39",
+    "description": "This is an important announcement for all club members. Please read carefully and share with others.",
+    "clubID": 20,
+    "createdAt": "2025-05-03T14:06:18.000Z"
+  },
+  {
+    "_id": 40,
+    "ownerId": 21,
+    "title": "Member Spotlight \u2014 40",
+    "description": "This is an important announcement for all club members. Please read carefully and share with others.",
+    "clubID": 11,
+    "createdAt": "2025-12-03T09:23:18.000Z"
+  },
+  {
+    "_id": 41,
+    "ownerId": 22,
+    "title": "Important Update \u2014 41",
+    "description": "This is an important announcement for all club members. Please read carefully and share with others.",
+    "clubID": 12,
+    "createdAt": "2025-08-31T14:59:18.000Z"
+  },
+  {
+    "_id": 42,
+    "ownerId": 19,
+    "title": "Welcome \u2014 42",
+    "description": "This is an important announcement for all club members. Please read carefully and share with others.",
+    "clubID": 9,
+    "createdAt": "2025-05-28T07:39:18.000Z"
+  },
+  {
+    "_id": 43,
+    "ownerId": 33,
+    "title": "Congratulations \u2014 43",
+    "description": "This is an important announcement for all club members. Please read carefully and share with others.",
+    "clubID": 23,
+    "createdAt": "2025-10-28T21:23:18.000Z"
+  },
+  {
+    "_id": 44,
+    "ownerId": 33,
+    "title": "Special Guest \u2014 44",
+    "description": "This is an important announcement for all club members. Please read carefully and share with others.",
+    "clubID": 23,
+    "createdAt": "2025-10-28T20:24:18.000Z"
+  },
+  {
+    "_id": 45,
+    "ownerId": 14,
+    "title": "Reminder \u2014 45",
+    "description": "This is an important announcement for all club members. Please read carefully and share with others.",
+    "clubID": 27,
+    "createdAt": "2025-10-26T12:04:18.000Z"
+  },
+  {
+    "_id": 46,
+    "ownerId": 20,
+    "title": "Join Us \u2014 46",
+    "description": "This is an important announcement for all club members. Please read carefully and share with others.",
+    "clubID": 10,
+    "createdAt": "2025-05-12T03:41:18.000Z"
+  },
+  {
+    "_id": 47,
+    "ownerId": 11,
+    "title": "Join Us \u2014 47",
+    "description": "This is an important announcement for all club members. Please read carefully and share with others.",
+    "clubID": 28,
+    "createdAt": "2025-10-10T07:20:18.000Z"
+  },
+  {
+    "_id": 48,
+    "ownerId": 26,
+    "title": "Schedule Change \u2014 48",
+    "description": "This is an important announcement for all club members. Please read carefully and share with others.",
+    "clubID": 16,
+    "createdAt": "2025-08-28T00:35:18.000Z"
+  },
+  {
+    "_id": 49,
+    "ownerId": 31,
+    "title": "Important Update \u2014 49",
+    "description": "This is an important announcement for all club members. Please read carefully and share with others.",
+    "clubID": 21,
+    "createdAt": "2025-10-07T06:15:18.000Z"
+  },
+  {
+    "_id": 50,
+    "ownerId": 26,
+    "title": "Special Guest \u2014 50",
+    "description": "This is an important announcement for all club members. Please read carefully and share with others.",
+    "clubID": 16,
+    "createdAt": "2025-11-20T06:21:18.000Z"
+  },
+  {
+    "_id": 51,
+    "ownerId": 30,
+    "title": "Important Update \u2014 51",
+    "description": "This is an important announcement for all club members. Please read carefully and share with others.",
+    "clubID": 20,
+    "createdAt": "2025-06-09T23:46:18.000Z"
+  },
+  {
+    "_id": 52,
+    "ownerId": 30,
+    "title": "Member Spotlight \u2014 52",
+    "description": "This is an important announcement for all club members. Please read carefully and share with others.",
+    "clubID": 20,
+    "createdAt": "2025-09-09T23:51:18.000Z"
+  },
+  {
+    "_id": 53,
+    "ownerId": 20,
+    "title": "Congratulations \u2014 53",
+    "description": "This is an important announcement for all club members. Please read carefully and share with others.",
+    "clubID": 10,
+    "createdAt": "2026-01-30T22:38:18.000Z"
+  },
+  {
+    "_id": 54,
+    "ownerId": 13,
+    "title": "Special Guest \u2014 54",
+    "description": "This is an important announcement for all club members. Please read carefully and share with others.",
+    "clubID": 3,
+    "createdAt": "2025-12-11T06:21:18.000Z"
+  },
+  {
+    "_id": 55,
+    "ownerId": 14,
+    "title": "New Event \u2014 55",
+    "description": "This is an important announcement for all club members. Please read carefully and share with others.",
+    "clubID": 27,
+    "createdAt": "2025-04-22T15:13:18.000Z"
+  },
+  {
+    "_id": 56,
+    "ownerId": 28,
+    "title": "Welcome \u2014 56",
+    "description": "This is an important announcement for all club members. Please read carefully and share with others.",
+    "clubID": 18,
+    "createdAt": "2025-05-28T14:11:18.000Z"
+  },
+  {
+    "_id": 57,
+    "ownerId": 24,
+    "title": "Welcome \u2014 57",
+    "description": "This is an important announcement for all club members. Please read carefully and share with others.",
+    "clubID": 14,
+    "createdAt": "2025-10-05T00:47:18.000Z"
+  },
+  {
+    "_id": 58,
+    "ownerId": 11,
+    "title": "Congratulations \u2014 58",
+    "description": "This is an important announcement for all club members. Please read carefully and share with others.",
+    "clubID": 28,
+    "createdAt": "2025-09-02T17:39:18.000Z"
+  },
+  {
+    "_id": 59,
+    "ownerId": 28,
+    "title": "Welcome \u2014 59",
+    "description": "This is an important announcement for all club members. Please read carefully and share with others.",
+    "clubID": 18,
+    "createdAt": "2026-03-16T01:22:18.000Z"
+  },
+  {
+    "_id": 60,
+    "ownerId": 11,
+    "title": "Welcome \u2014 60",
+    "description": "This is an important announcement for all club members. Please read carefully and share with others.",
+    "clubID": 30,
+    "createdAt": "2026-02-01T03:42:18.000Z"
+  },
+  {
+    "_id": 61,
+    "ownerId": 32,
+    "title": "Welcome \u2014 61",
+    "description": "This is an important announcement for all club members. Please read carefully and share with others.",
+    "clubID": 22,
+    "createdAt": "2025-07-15T20:51:18.000Z"
+  },
+  {
+    "_id": 62,
+    "ownerId": 11,
+    "title": "Resources Available \u2014 62",
+    "description": "This is an important announcement for all club members. Please read carefully and share with others.",
+    "clubID": 1,
+    "createdAt": "2025-04-19T20:24:18.000Z"
+  },
+  {
+    "_id": 63,
+    "ownerId": 18,
+    "title": "Resources Available \u2014 63",
+    "description": "This is an important announcement for all club members. Please read carefully and share with others.",
+    "clubID": 8,
+    "createdAt": "2026-03-07T23:35:18.000Z"
+  },
+  {
+    "_id": 64,
+    "ownerId": 20,
+    "title": "Important Update \u2014 64",
+    "description": "This is an important announcement for all club members. Please read carefully and share with others.",
+    "clubID": 10,
+    "createdAt": "2026-02-05T08:39:18.000Z"
+  },
+  {
+    "_id": 65,
+    "ownerId": 34,
+    "title": "Congratulations \u2014 65",
+    "description": "This is an important announcement for all club members. Please read carefully and share with others.",
+    "clubID": 24,
+    "createdAt": "2026-01-22T16:26:18.000Z"
+  },
+  {
+    "_id": 66,
+    "ownerId": 21,
+    "title": "New Event \u2014 66",
+    "description": "This is an important announcement for all club members. Please read carefully and share with others.",
+    "clubID": 11,
+    "createdAt": "2025-08-25T14:38:18.000Z"
+  },
+  {
+    "_id": 67,
+    "ownerId": 33,
+    "title": "Resources Available \u2014 67",
+    "description": "This is an important announcement for all club members. Please read carefully and share with others.",
+    "clubID": 23,
+    "createdAt": "2025-06-19T14:02:18.000Z"
+  },
+  {
+    "_id": 68,
+    "ownerId": 13,
+    "title": "New Event \u2014 68",
+    "description": "This is an important announcement for all club members. Please read carefully and share with others.",
+    "clubID": 3,
+    "createdAt": "2026-02-26T02:25:18.000Z"
+  },
+  {
+    "_id": 69,
+    "ownerId": 14,
+    "title": "Upcoming Meeting \u2014 69",
+    "description": "This is an important announcement for all club members. Please read carefully and share with others.",
+    "clubID": 27,
+    "createdAt": "2026-03-16T07:33:18.000Z"
+  },
+  {
+    "_id": 70,
+    "ownerId": 28,
+    "title": "Join Us \u2014 70",
+    "description": "This is an important announcement for all club members. Please read carefully and share with others.",
+    "clubID": 18,
+    "createdAt": "2025-11-27T00:42:18.000Z"
+  }
+]

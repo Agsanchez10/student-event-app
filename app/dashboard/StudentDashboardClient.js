@@ -25,7 +25,7 @@ export default function StudentDashboardClient({
   });
   const [isFlagging, setIsFlagging] = useState(false);
 
-  const ANNOUNCEMENTS_PER_PAGE = 10;
+  const ANNOUNCEMENTS_PER_PAGE = 5;
   const announcementPageStart = (announcementPage - 1) * ANNOUNCEMENTS_PER_PAGE;
   const announcementPages = Math.max(1, Math.ceil(recentAnnouncements.length / ANNOUNCEMENTS_PER_PAGE));
 
@@ -164,10 +164,10 @@ export default function StudentDashboardClient({
                               {clubMap[announcement.clubID] || "Unknown Club"} →
                             </a>
                           </div>
-                          <p className="text-slate-700">
+                          <p className="flex justify-between text-slate-700">
                             {announcement.description || "No description available."}
-                          </p>
-                          <div className="flex justify-end pt-2">
+                          
+                          
                             <button
                               onClick={() => handleOpenFlagForm(announcement, "announcement")}
                               className="rounded-full bg-yellow-500 px-3 py-1 text-xs font-semibold text-white transition hover:bg-yellow-600"
@@ -175,7 +175,7 @@ export default function StudentDashboardClient({
                             >
                               🚩 Flag
                             </button>
-                          </div>
+                          </p>
                         </div>
                       </div>
                     ))}
@@ -234,7 +234,7 @@ export default function StudentDashboardClient({
                             href={`/dashboard/clubs/${club._id}`}
                             className="mt-4 inline-block rounded-full bg-[#e05c5c] px-6 py-3 text-sm font-semibold text-white transition hover:bg-[#c94a4a]"
                           >
-                            View club
+                            Visit Club Page
                           </a>
                         </div>
                       </div>

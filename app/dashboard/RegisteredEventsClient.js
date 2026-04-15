@@ -61,11 +61,11 @@ export default function RegisteredEventsClient({ registeredEvents, eventPage, cl
 
 
     return (
-        <div className="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-slate-200 dark:bg-slate-900 dark:ring-slate-700">
+        <div className="relative rounded-[2rem] border border-[#d4b18b]/40 bg-[#f9f2e4] p-8 shadow-[0_25px_65px_-30px_rgba(15,23,42,0.75)]">
                             <div className="flex items-center justify-between gap-4">
                                 <div>
-                                    <h2 className="text-xl font-semibold text-slate-950 dark:text-white">Registered events</h2>
-                                    <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">Showing up to {ITEMS_PER_PAGE} events you are registered for.</p>
+                                    <h2 className="text-2xl font-semibold text-slate-950">Registered events</h2>
+                                    <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">Showing {Math.min(ITEMS_PER_PAGE, registeredEvents.length)} of {registeredEvents.length} events you are registered for:</p>
                                 </div>
                                 <Link href="/dashboard/registeredEvents" className="rounded-full bg-slate-950 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-950 dark:hover:bg-slate-200">View all registered events</Link>
                             </div>
@@ -76,7 +76,7 @@ export default function RegisteredEventsClient({ registeredEvents, eventPage, cl
                                 <>
                                     <div className="mt-6 space-y-4">
                                         {registeredEvents.slice(eventPageStart, eventPageStart + ITEMS_PER_PAGE).map((event) => (
-                                            <div key={event._id} className="rounded-3xl border border-slate-200 bg-slate-50 p-4 dark:border-slate-800 dark:bg-slate-950">
+                                            <div key={event._id} className="rounded-[1.8rem] border border-[#d4b18b]/40 bg-[#fff5e4] p-6 shadow-md shadow-[#b9955d]/10">
                                                 <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                                                     <div>
                                                     <h3 className="text-lg font-semibold text-slate-950 dark:text-white">{event.name || "Untitled Event"}</h3>
@@ -115,7 +115,7 @@ export default function RegisteredEventsClient({ registeredEvents, eventPage, cl
                                     </div>
                                     
                                     {studentEventPages > 1 ? (
-                                        <div className="mt-6 flex items-center justify-between rounded-3xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-600 dark:border-slate-800 dark:bg-slate-950 dark:text-slate-300">
+                                        <div className="mt-6 flex items-center justify-between rounded-[1.8rem] border border-[#d4b18b]/40 bg-[#fff5e4] p-4 text-sm text-slate-700">
                                             <Link
                                                 href={`/dashboard?eventPage=${Math.max(1, eventPage - 1)}&clubPage=${clubPage}`}
                                                 className={`rounded-full px-4 py-2 transition ${eventPage === 1 ? "bg-slate-200 text-slate-400 cursor-not-allowed" : "bg-slate-950 text-white hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-950 dark:hover:bg-slate-200"}`}

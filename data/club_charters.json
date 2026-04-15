@@ -1,0 +1,392 @@
+[
+  {
+    "_id": 1,
+    "name": "Students for Sustainability",
+    "description": "We propose to establish Students for Sustainability to foster community and learning.",
+    "purpose": "To bring together students with shared interests and create meaningful experiences.",
+    "proposedOwner": "Kendall Davis",
+    "initiatorId": 365,
+    "signatures": [
+      195,
+      206,
+      109,
+      450,
+      358,
+      78,
+      84,
+      323
+    ],
+    "clubId": null,
+    "status": "collecting",
+    "createdAt": "2025-06-25T21:59:18.000Z"
+  },
+  {
+    "_id": 2,
+    "name": "Quantum Computing Society",
+    "description": "We propose to establish Quantum Computing Society to foster community and learning.",
+    "purpose": "To bring together students with shared interests and create meaningful experiences.",
+    "proposedOwner": "Micah Parker",
+    "initiatorId": 163,
+    "signatures": [
+      78,
+      108,
+      242,
+      351,
+      465,
+      278,
+      303
+    ],
+    "clubId": null,
+    "status": "rejected",
+    "createdAt": "2026-04-04T13:25:18.000Z"
+  },
+  {
+    "_id": 3,
+    "name": "Social Justice Alliance",
+    "description": "We propose to establish Social Justice Alliance to foster community and learning.",
+    "purpose": "To bring together students with shared interests and create meaningful experiences.",
+    "proposedOwner": "Parker Parker",
+    "initiatorId": 428,
+    "signatures": [
+      288,
+      165,
+      246,
+      195,
+      415,
+      208,
+      463,
+      113
+    ],
+    "clubId": null,
+    "status": "draft",
+    "createdAt": "2025-08-23T04:58:18.000Z"
+  },
+  {
+    "_id": 4,
+    "name": "Podcast Production Club",
+    "description": "We propose to establish Podcast Production Club to foster community and learning.",
+    "purpose": "To bring together students with shared interests and create meaningful experiences.",
+    "proposedOwner": "Peyton Martin",
+    "initiatorId": 342,
+    "signatures": [
+      244,
+      482,
+      38,
+      173,
+      389,
+      143,
+      422,
+      323,
+      442,
+      286
+    ],
+    "clubId": null,
+    "status": "rejected",
+    "createdAt": "2025-11-21T17:03:18.000Z"
+  },
+  {
+    "_id": 5,
+    "name": "Urban Farming Initiative",
+    "description": "We propose to establish Urban Farming Initiative to foster community and learning.",
+    "purpose": "To bring together students with shared interests and create meaningful experiences.",
+    "proposedOwner": "Dani Wilson",
+    "initiatorId": 156,
+    "signatures": [
+      200,
+      272,
+      398,
+      283
+    ],
+    "clubId": null,
+    "status": "rejected",
+    "createdAt": "2025-12-21T06:08:18.000Z"
+  },
+  {
+    "_id": 6,
+    "name": "Open Source Dev Collective",
+    "description": "We propose to establish Open Source Dev Collective to foster community and learning.",
+    "purpose": "To bring together students with shared interests and create meaningful experiences.",
+    "proposedOwner": "Kai Edwards",
+    "initiatorId": 77,
+    "signatures": [
+      89,
+      253,
+      394,
+      75,
+      228
+    ],
+    "clubId": null,
+    "status": "collecting",
+    "createdAt": "2026-04-02T06:32:18.000Z"
+  },
+  {
+    "_id": 7,
+    "name": "Wellness & Mindfulness Club",
+    "description": "We propose to establish Wellness & Mindfulness Club to foster community and learning.",
+    "purpose": "To bring together students with shared interests and create meaningful experiences.",
+    "proposedOwner": "Addison Miller",
+    "initiatorId": 302,
+    "signatures": [
+      419,
+      98,
+      121,
+      137,
+      260,
+      481,
+      94
+    ],
+    "clubId": null,
+    "status": "draft",
+    "createdAt": "2025-10-14T21:32:18.000Z"
+  },
+  {
+    "_id": 8,
+    "name": "Competitive Cooking Club",
+    "description": "We propose to establish Competitive Cooking Club to foster community and learning.",
+    "purpose": "To bring together students with shared interests and create meaningful experiences.",
+    "proposedOwner": "Yael Harris",
+    "initiatorId": 356,
+    "signatures": [
+      447,
+      304,
+      285,
+      107,
+      419,
+      483,
+      316,
+      250,
+      240
+    ],
+    "clubId": null,
+    "status": "draft",
+    "createdAt": "2025-08-09T09:49:18.000Z"
+  },
+  {
+    "_id": 9,
+    "name": "VR/AR Explorers",
+    "description": "We propose to establish VR/AR Explorers to foster community and learning.",
+    "purpose": "To bring together students with shared interests and create meaningful experiences.",
+    "proposedOwner": "Jamie Martin",
+    "initiatorId": 186,
+    "signatures": [
+      404,
+      486,
+      382,
+      174,
+      303
+    ],
+    "clubId": null,
+    "status": "submitted",
+    "createdAt": "2026-01-19T17:58:18.000Z"
+  },
+  {
+    "_id": 10,
+    "name": "Slam Poetry Society",
+    "description": "We propose to establish Slam Poetry Society to foster community and learning.",
+    "purpose": "To bring together students with shared interests and create meaningful experiences.",
+    "proposedOwner": "Blake Turner",
+    "initiatorId": 368,
+    "signatures": [
+      120,
+      108,
+      184,
+      303,
+      386
+    ],
+    "clubId": null,
+    "status": "collecting",
+    "createdAt": "2026-01-20T04:45:18.000Z"
+  },
+  {
+    "_id": 11,
+    "name": "Financial Literacy Club",
+    "description": "We propose to establish Financial Literacy Club to foster community and learning.",
+    "purpose": "To bring together students with shared interests and create meaningful experiences.",
+    "proposedOwner": "Haven Garcia",
+    "initiatorId": 301,
+    "signatures": [
+      345,
+      164,
+      277,
+      272,
+      143,
+      205,
+      418,
+      404,
+      472,
+      105
+    ],
+    "clubId": null,
+    "status": "collecting",
+    "createdAt": "2025-12-05T05:15:18.000Z"
+  },
+  {
+    "_id": 12,
+    "name": "Peer Tutoring Network",
+    "description": "We propose to establish Peer Tutoring Network to foster community and learning.",
+    "purpose": "To bring together students with shared interests and create meaningful experiences.",
+    "proposedOwner": "Morgan Scott",
+    "initiatorId": 278,
+    "signatures": [
+      41,
+      198,
+      249,
+      127,
+      112,
+      276,
+      70,
+      38
+    ],
+    "clubId": null,
+    "status": "submitted",
+    "createdAt": "2026-03-05T12:34:18.000Z"
+  },
+  {
+    "_id": 13,
+    "name": "Campus Radio Club",
+    "description": "We propose to establish Campus Radio Club to foster community and learning.",
+    "purpose": "To bring together students with shared interests and create meaningful experiences.",
+    "proposedOwner": "Ember Evans",
+    "initiatorId": 391,
+    "signatures": [
+      84,
+      311,
+      270,
+      205
+    ],
+    "clubId": null,
+    "status": "draft",
+    "createdAt": "2025-04-12T01:51:18.000Z"
+  },
+  {
+    "_id": 14,
+    "name": "Esports Federation",
+    "description": "We propose to establish Esports Federation to foster community and learning.",
+    "purpose": "To bring together students with shared interests and create meaningful experiences.",
+    "proposedOwner": "Cameron Parker",
+    "initiatorId": 340,
+    "signatures": [
+      116,
+      70
+    ],
+    "clubId": null,
+    "status": "submitted",
+    "createdAt": "2026-01-31T00:18:18.000Z"
+  },
+  {
+    "_id": 15,
+    "name": "Cultural Exchange Society",
+    "description": "We propose to establish Cultural Exchange Society to foster community and learning.",
+    "purpose": "To bring together students with shared interests and create meaningful experiences.",
+    "proposedOwner": "Jordan Collins",
+    "initiatorId": 151,
+    "signatures": [
+      212,
+      357,
+      43,
+      134,
+      176,
+      181,
+      456
+    ],
+    "clubId": 15,
+    "status": "approved",
+    "createdAt": "2026-03-19T15:45:18.000Z"
+  },
+  {
+    "_id": 16,
+    "name": "Legal Studies Society",
+    "description": "We propose to establish Legal Studies Society to foster community and learning.",
+    "purpose": "To bring together students with shared interests and create meaningful experiences.",
+    "proposedOwner": "Jamie Roberts",
+    "initiatorId": 355,
+    "signatures": [
+      428,
+      242,
+      166,
+      323,
+      313,
+      364,
+      373,
+      139,
+      75
+    ],
+    "clubId": null,
+    "status": "rejected",
+    "createdAt": "2025-05-28T10:08:18.000Z"
+  },
+  {
+    "_id": 17,
+    "name": "Biotech Innovations Club",
+    "description": "We propose to establish Biotech Innovations Club to foster community and learning.",
+    "purpose": "To bring together students with shared interests and create meaningful experiences.",
+    "proposedOwner": "Frankie Bell",
+    "initiatorId": 146,
+    "signatures": [
+      179,
+      127,
+      170,
+      324,
+      88,
+      100,
+      444,
+      303,
+      336,
+      366
+    ],
+    "clubId": 7,
+    "status": "approved",
+    "createdAt": "2025-12-31T01:00:18.000Z"
+  },
+  {
+    "_id": 18,
+    "name": "Journalism & Media Club",
+    "description": "We propose to establish Journalism & Media Club to foster community and learning.",
+    "purpose": "To bring together students with shared interests and create meaningful experiences.",
+    "proposedOwner": "Elliot Carter",
+    "initiatorId": 177,
+    "signatures": [
+      449,
+      413
+    ],
+    "clubId": null,
+    "status": "rejected",
+    "createdAt": "2026-02-16T21:35:18.000Z"
+  },
+  {
+    "_id": 19,
+    "name": "Classic Literature Society",
+    "description": "We propose to establish Classic Literature Society to foster community and learning.",
+    "purpose": "To bring together students with shared interests and create meaningful experiences.",
+    "proposedOwner": "Avery Thomas",
+    "initiatorId": 122,
+    "signatures": [
+      37,
+      437,
+      154,
+      146,
+      82
+    ],
+    "clubId": null,
+    "status": "rejected",
+    "createdAt": "2025-05-25T10:32:18.000Z"
+  },
+  {
+    "_id": 20,
+    "name": "Community Theater Group",
+    "description": "We propose to establish Community Theater Group to foster community and learning.",
+    "purpose": "To bring together students with shared interests and create meaningful experiences.",
+    "proposedOwner": "Reese Johnson",
+    "initiatorId": 279,
+    "signatures": [
+      483,
+      36,
+      201,
+      75,
+      62
+    ],
+    "clubId": null,
+    "status": "collecting",
+    "createdAt": "2025-11-27T20:49:18.000Z"
+  }
+]

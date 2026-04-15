@@ -1,64 +1,24 @@
+// API call to register a student for an event
 import { NextResponse } from "next/server";
-import { registerForEvent, unregisterFromEvent } from "@/services/eventService";
-import { cookies } from "next/headers";
-import jwt from "jsonwebtoken";
-
-const getUserFromToken = (token) => {
-    try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        return decoded;
-    } catch (error) {
-        throw new Error("Invalid token");
-    }
-};
+import { registerForEvent } from "@/services/eventService";
 
 export async function POST(req, { params }) {
     const { eventid } = await params;
-
+    const body = await req.json();
+    const { studentId } = body;
+    if (!studentId) {
+        return NextResponse.json({ error: "Student ID is required" }, { status: 400 });
+    }
     try {
-        // Get user from token
-        const cookieStore = await cookies();
-        const token = cookieStore.get("token")?.value;
-        
-        if (!token) {
-            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-        }
-
-        const user = getUserFromToken(token);
-
-        // Register user for event
-        const event = await registerForEvent(eventid, user.id);
-        return NextResponse.json(event, { status: 200 });
+        const result = await registerForEvent(eventid, studentId);
+        if (result.error) {
+            return NextResponse.json({ error: result.error }, { status: 400 });
+        }   
+        return NextResponse.json({ message: "Successfully registered for event" }, { status: 200 });
     } catch (error) {
         if (error.message.includes("404")) {
             return NextResponse.json({ error: error.message }, { status: 404 });
-        }
-        if (error.message.includes("already registered")) {
-            return NextResponse.json({ error: error.message }, { status: 400 });
         }
         return NextResponse.json({ error: "An error occurred while registering for the event" }, { status: 500 });
-    }
-}
-
-export async function DELETE(req, { params }) {
-    const { eventid } = await params;
-
-    try {
-        const cookieStore = await cookies();
-        const token = cookieStore.get("token")?.value;
-
-        if(!token) {
-            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-        }
-        const user = getUserFromToken(token);
-
-        // Unregister user from event
-        const event = await unregisterFromEvent(eventid, user.id);
-        return NextResponse.json(event, { status: 200 });
-    } catch (error) {
-        if (error.message.includes("404")) {
-            return NextResponse.json({ error: error.message }, { status: 404 });
-        }
-        return NextResponse.json({ error: "An error occurred while unregistering from the event" }, { status: 500 });
     }
 }

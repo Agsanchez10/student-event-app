@@ -1,0 +1,146 @@
+[
+  {
+    "_id": 1,
+    "clubID": 5,
+    "userId": 408,
+    "userName": "Briar Brown",
+    "userEmail": "briar.brown@university.edu",
+    "status": "rejected",
+    "createdAt": "2026-02-01T08:25:18.000Z"
+  },
+  {
+    "_id": 2,
+    "clubID": 30,
+    "userId": 164,
+    "userName": "Nova Nelson",
+    "userEmail": "nova.nelson@university.edu",
+    "status": "pending",
+    "createdAt": "2025-11-04T21:10:18.000Z"
+  },
+  {
+    "_id": 3,
+    "clubID": 20,
+    "userId": 346,
+    "userName": "Bailey Phillips",
+    "userEmail": "bailey.phillips@university.edu",
+    "status": "approved",
+    "createdAt": "2025-10-24T11:42:18.000Z"
+  },
+  {
+    "_id": 4,
+    "clubID": 2,
+    "userId": 393,
+    "userName": "Micah Thomas",
+    "userEmail": "micah.thomas@university.edu",
+    "status": "pending",
+    "createdAt": "2025-11-21T02:58:18.000Z"
+  },
+  {
+    "_id": 5,
+    "clubID": 30,
+    "userId": 138,
+    "userName": "Robin Young",
+    "userEmail": "robin.young@university.edu",
+    "status": "pending",
+    "createdAt": "2026-02-19T21:05:18.000Z"
+  },
+  {
+    "_id": 6,
+    "clubID": 20,
+    "userId": 151,
+    "userName": "Jordan Collins",
+    "userEmail": "jordan.collins@university.edu",
+    "status": "pending",
+    "createdAt": "2025-11-27T20:14:18.000Z"
+  },
+  {
+    "_id": 7,
+    "clubID": 30,
+    "userId": 450,
+    "userName": "Oakley Hall",
+    "userEmail": "oakley.hall@university.edu",
+    "status": "approved",
+    "createdAt": "2025-11-09T00:23:18.000Z"
+  },
+  {
+    "_id": 8,
+    "clubID": 2,
+    "userId": 140,
+    "userName": "Taylor Adams",
+    "userEmail": "taylor.adams@university.edu",
+    "status": "pending",
+    "createdAt": "2025-11-21T06:45:18.000Z"
+  },
+  {
+    "_id": 9,
+    "clubID": 27,
+    "userId": 326,
+    "userName": "Peyton Collins",
+    "userEmail": "peyton.collins@university.edu",
+    "status": "approved",
+    "createdAt": "2025-11-04T16:33:18.000Z"
+  },
+  {
+    "_id": 10,
+    "clubID": 30,
+    "userId": 290,
+    "userName": "Elliot King",
+    "userEmail": "elliot.king@university.edu",
+    "status": "pending",
+    "createdAt": "2025-12-10T01:14:18.000Z"
+  },
+  {
+    "_id": 11,
+    "clubID": 27,
+    "userId": 292,
+    "userName": "Ember Hall",
+    "userEmail": "ember.hall@university.edu",
+    "status": "pending",
+    "createdAt": "2026-03-25T00:16:18.000Z"
+  },
+  {
+    "_id": 12,
+    "clubID": 5,
+    "userId": 446,
+    "userName": "Robin Carter",
+    "userEmail": "robin.carter@university.edu",
+    "status": "pending",
+    "createdAt": "2026-02-04T02:46:18.000Z"
+  },
+  {
+    "_id": 13,
+    "clubID": 2,
+    "userId": 327,
+    "userName": "Jamie Parker",
+    "userEmail": "jamie.parker@university.edu",
+    "status": "pending",
+    "createdAt": "2026-02-26T15:28:18.000Z"
+  },
+  {
+    "_id": 14,
+    "clubID": 2,
+    "userId": 291,
+    "userName": "Emery Cook",
+    "userEmail": "emery.cook@university.edu",
+    "status": "pending",
+    "createdAt": "2026-03-19T23:43:18.000Z"
+  },
+  {
+    "_id": 15,
+    "clubID": 2,
+    "userId": 150,
+    "userName": "Parker Wilson",
+    "userEmail": "parker.wilson@university.edu",
+    "status": "rejected",
+    "createdAt": "2025-12-30T14:46:18.000Z"
+  },
+  {
+    "_id": 16,
+    "clubID": 20,
+    "userId": 70,
+    "userName": "Kendall Phillips",
+    "userEmail": "kendall.phillips@university.edu",
+    "status": "rejected",
+    "createdAt": "2025-11-26T15:26:18.000Z"
+  }
+]

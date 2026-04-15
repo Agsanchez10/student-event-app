@@ -2,6 +2,8 @@ import { withDB } from "@/lib/mongodb";
 import Club from "@/models/Club";
 import Event from "@/models/Event";
 import Announcement from "@/models/Announcement";
+import User from "@/models/User";
+
 
 // return all clubs
 export const getClubs = withDB(async () => {
@@ -49,4 +51,43 @@ export const updateClub = withDB(async (clubid, body) => {
     return club;
 });
 
+export const joinClub = withDB(async (clubid, studentId) => {
+    const club = await Club.findById(clubid);
+    const user = await User.findById(studentId);
+    if (!club) {
+        throw new Error("404: Club not found");
+    }   
+
+    // Check if user is already a member
+    if (club.memberList.includes(studentId)) {
+        return { error: "User is already a member of this club" };
+    }
+
+    // Add user to members list
+    club.memberList.push(studentId);
+    user.clubMemberships.push(club._id);
+    await club.save();
+    await user.save();
+    return club;
+});
+
+export const leaveClub = withDB(async (clubid, studentId) => {
+    const club = await Club.findById(clubid);
+    const user = await User.findById(studentId);
+    if (!club) {
+        throw new Error("404: Club not found");
+    }
+
+    // Check if user is a member
+    if (!club.memberList.includes(studentId)) {
+        return { error: "User is not a member of this club" };
+    }
+
+    // Remove user from members list
+    club.memberList = club.memberList.filter((id) => id !== studentId);   
+    user.clubMemberships = user.clubMemberships.filter((id) => id !== club._id);
+    await club.save();
+    await user.save();
+    return club;
+});
 
