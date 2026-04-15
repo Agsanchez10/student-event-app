@@ -43,9 +43,9 @@ export default function ClubCharterActivityClient({ charters, currentPage, items
     }
 
     return (
-        <div className="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-slate-200 dark:bg-slate-900 dark:ring-slate-700">
+        <div className="relative rounded-[2rem] border border-[#d4b18b]/40 bg-[#f9f2e4] p-8 shadow-[0_25px_65px_-30px_rgba(15,23,42,0.75)]">
             <div>
-                <h2 className="text-xl font-semibold text-slate-950 dark:text-white">Club charter activity</h2>
+                <h2 className="text-2xl font-semibold text-slate-950">Club charter activity</h2>
                 <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">Track charters you started or signed and manage ones you own.</p>
             </div>
 

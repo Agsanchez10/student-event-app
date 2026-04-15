@@ -64,7 +64,9 @@ export default function EventListClient({ events, currentUser }) {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',                    
-                }
+                },
+                body: JSON.stringify({ studentId: currentUser._id }),
+
             });
 
             if (response.ok) {

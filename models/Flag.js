@@ -4,7 +4,7 @@ const FlagSchema = new mongoose.Schema({
     _id: { type: Number, required: true },
     flaggedById: { type: Number, ref: "User", required: true },
     contentId: { type: Number, required: true },
-    type: { type: String, enum: ["user", "club", "announcement", "event"], required: true },
+    type: { type: String, enum: ["user", "club", "announcement", "event", "charter"], required: true },
     reason: { type: String, enum: ["spam", "harassment", "inappropriate", "misinformation", "other"], required: true },
     description: String,
     isResolved: { type: Boolean, default: false },

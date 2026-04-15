@@ -30,6 +30,10 @@ export default function ClubFinderClient({
         try {
             const response = await fetch(`/api/clubs/${clubId}/join`, {
                 method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ studentId: user._id }),
             });
 
             if (response.ok) {
