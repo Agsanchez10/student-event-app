@@ -20,6 +20,12 @@ const formatTime = (value) => {
 
 export default async function PublicEventsPage() {
     const events = await getPublicEvents();
+    const today = new Date().toLocaleDateString("en-US", {
+        month: "long",
+        day: "numeric",
+        year: "numeric",
+    });
+
 
     return (
         <div className="  from-slate-50 to-slate-100 dark:from-slate-950 dark:to-slate-900 py-10">
@@ -51,7 +57,10 @@ export default async function PublicEventsPage() {
                     </div>
                 ) : (
                     <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                        {events.map((event) => (
+                        {events
+                            .filter((event) => Date.parse(event.date) >= Date.parse(today))
+                            .sort((a, b) => new Date(a.date) - new Date(b.date))
+                            .map((event) => (
                             <div
                                 key={event._id}
                                 className="rounded-2xl bg-white p-6 shadow-md ring-1 ring-slate-200 transition hover:shadow-lg dark:bg-slate-900 dark:ring-slate-700"
@@ -95,18 +104,7 @@ export default async function PublicEventsPage() {
                                     </p>
                                 )}
 
-                                {/* Attendance Count */}
-                                <div className="mt-4 flex items-center justify-between border-t border-slate-200 pt-4 dark:border-slate-700">
-                                    <span className="text-xs font-medium text-slate-600 dark:text-slate-400">
-                                        {event.registrationList?.length || 0} registered
-                                    </span>
-                                    <Link
-                                        href="/dashboard/events"
-                                        className="rounded-lg bg-slate-950 px-3 py-2 text-xs font-semibold text-white transition hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-950 dark:hover:bg-slate-200"
-                                    >
-                                        View Details
-                                    </Link>
-                                </div>
+                               
                             </div>
                         ))}
                     </div>

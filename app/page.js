@@ -21,16 +21,13 @@ export default function Home() {
                 </p>
               </div>
 
-              <div className="grid gap-4 sm:grid-cols-3">
+              <div className="grid gap-4 sm:grid-cols-2">
                 <Link href="/public/events" className="inline-flex items-center justify-center rounded-3xl bg-[#e05c5c] px-6 py-3 text-sm font-semibold text-white transition hover:bg-[#c94a4a]">
                   Browse events
                 </Link>
                 <Link href="/public/about" className="inline-flex items-center justify-center rounded-3xl border border-[#d4b18b] bg-[#fff5e4] px-6 py-3 text-sm font-semibold text-slate-900 transition hover:border-[#c1a06e] hover:bg-[#f8e7ce]">
                   Learn more
-                </Link>
-                <Link href="/testing" className="inline-flex items-center justify-center rounded-3xl bg-purple-600 px-6 py-3 text-sm font-semibold text-white transition hover:bg-purple-700">
-                  🧪 Testing
-                </Link>
+                </Link>                
               </div>
             </div>
 
