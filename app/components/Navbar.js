@@ -35,24 +35,26 @@ export default function Navbar() {
       if (!res.ok) {
         const errorData = await res.json();
         setError(`Login failed: ${errorData.error}`);
+        setIsLoading(false);
         return;
       } 
       
       const data = await res.json();
-
       setIsLoggedIn(true);
       setShowLogin(false);
-
+      
       if(data.user?.role === "SystemAdmin") {
-        window.location.href = "/system-admin";
+        router.push("/admin/dashboard");
         return;
       }
   
-       window.location.href = "/dashboard";
+       router.push("/dashboard");
 
     } catch (error) {
       console.error("Login error:", error);
       setError("An error occurred during login.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -63,7 +65,7 @@ export default function Navbar() {
       const res = await fetch("/api/auth/logout", { method: "POST" });
       if (res.ok) {
         setIsLoggedIn(false);
-        window.location.href = "/logout";
+        router.push("/");
       } else {
         console.error("Logout failed");
       }
@@ -71,6 +73,8 @@ export default function Navbar() {
       console.error("Logout error:", error);
     }
   };
+
+  
 
   
   return (
@@ -84,15 +88,11 @@ export default function Navbar() {
 
         <ul className="flex gap-6 text-1xl font-bold">
           <li className="home-link">
-            <a href="/" className="nav-link">Home</a>
+            <Link href="/" className="nav-link">Home</Link>
           </li>
           <li className="about-link">
-            <a href="/public/about" className="nav-link">About</a>
+            <Link href="/public/about" className="nav-link">About</Link>
           </li>
-          <li className="contact-link">
-            <a href="/public/contact" className="nav-link">Contact</a>
-          </li>
-          |
           <li className="login-link">
             {isLoggedIn ? (
               <button onClick={handleLogout} label="logout-button" className="nav-link">Logout</button>
@@ -140,8 +140,7 @@ export default function Navbar() {
                       onChange={(e) => setEmail(e.target.value)}
                       className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#e12b53] focus:border-[#e12b53]"
                       placeholder="EMAIL"
-                      required
-                    />
+                      required />                    
                 </div>
                   <div>
                       <label htmlFor="password" className="block text-sm font-medium text-gray-700">
@@ -164,19 +163,20 @@ export default function Navbar() {
                           </label>
                       </div>
                       <div className="text-sm">
-                          <a href="#" className="font-medium text-blue-600 hover:text-blue-500">
+                          <p>                            
+                            <Link href="/reset-password" className="font-medium text-[#e12b53] hover:text-[#c91f4a]">
                             Forgot your password?
-                          </a>
+                            </Link>
+                          </p>
                       </div>
                   </div>
                   <div>
 
                       <button type="submit" 
                         className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#e12b53] hover:bg-[#c91f4a] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#e12b53]"                        
-                        disabled={isLoading}
-                        >
-                          {isLoading ? "Signing In..." : "Sign In"}
-                        </button>
+                        disabled={isLoading}>
+                        {isLoading ? "Logging in..." : "Login"}
+                      </button>
                    </div>
                    <div className="text-sm text-center">
                      {error && <p className="text-red-500">{error}</p>}

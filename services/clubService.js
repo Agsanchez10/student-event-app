@@ -20,6 +20,7 @@ export const getClub = withDB(async (clubid) => {
     return club;       
 });
 
+// create a new club with the provided details
 export const createClub = withDB(async (body) => {
     const lastID = await Club.findOne().sort({ _id: -1 });
     const newId = lastID ? lastID._id + 1 : 1;
@@ -28,6 +29,7 @@ export const createClub = withDB(async (body) => {
     return club;
 });
 
+// delete a club and all associated events and announcements
 export const deleteClub = withDB(async (clubid) => {
     const club = await Club.findByIdAndDelete(clubid);
     if (!club) {
@@ -43,6 +45,7 @@ export const deleteClub = withDB(async (clubid) => {
     return club;
 });
 
+// update a club's details
 export const updateClub = withDB(async (clubid, body) => {
     const club = await Club.findByIdAndUpdate(clubid, body, { new: true });
     if (!club) {
@@ -51,6 +54,7 @@ export const updateClub = withDB(async (clubid, body) => {
     return club;
 });
 
+// add a student to a club's member list
 export const joinClub = withDB(async (clubid, studentId) => {
     const club = await Club.findById(clubid);
     const user = await User.findById(studentId);
@@ -71,6 +75,7 @@ export const joinClub = withDB(async (clubid, studentId) => {
     return club;
 });
 
+// Remove a student from a club's member list
 export const leaveClub = withDB(async (clubid, studentId) => {
     const club = await Club.findById(clubid);
     const user = await User.findById(studentId);
