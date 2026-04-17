@@ -60,6 +60,8 @@ export default function LoginClient() {
                             placeholder="EMAIL"
                         />
                     </div>
+
+                    {/* Password Field */}
                     <div>
                         <label htmlFor="password" className="block text-sm font-medium text-slate-700 dark:text-slate-300">
                             Password
@@ -82,6 +84,16 @@ export default function LoginClient() {
                     </button>
                     {error && <p className="text-red-500 text-sm text-center">{error}</p>}
                     
+                    {/* Forgot Password Link */}
+                    <div className="text-center">
+                        <Link
+                            href="/reset-password"
+                            className="text-sm text-[#e12b53] hover:text-[#c91f4a] transition"
+                        >
+                            Forgot Password?
+                        </Link>
+                    </div>
+
                     {/* Register Link */}
                     <div className="text-center">
                         <p className="text-sm text-slate-600 dark:text-slate-400">

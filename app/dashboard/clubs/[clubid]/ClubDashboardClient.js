@@ -2,6 +2,11 @@
 
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
+import { fetchUser } from "@/app/actions/userActions";
+import { addAnnouncement, removeAnnouncement, modifyAnnouncement } from "@/app/actions/announcementActions";
+import { addEvent, removeEvent, registerForEventAction, unregisterFromEventAction } from "@/app/actions/eventActions";
+import { leaveClubAction } from "@/app/actions/clubActions";
+import { addFlag } from "@/app/actions/flagActions";
 
 export default function ClubDashboardClient({
     club,
@@ -59,21 +64,15 @@ export default function ClubDashboardClient({
 
     const getOwnerName = async (ownerId) => {
         try {
-            const response = await fetch(`/api/users/${ownerId}`, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                }
-            });
-
-            if(!response.ok) {
+            const result = await fetchUser(ownerId);
+            if (result.success) {
+                const user = result.data;
+                const name = `${user.firstName} ${user.lastName}`.trim() || user.email || "Unknown";
+                console.log(`Fetched owner name for user ID ${ownerId}: ${name}`);
+                return name || "TBD";
+            } else {
                 throw new Error('Failed to fetch owner name');
             }
-
-            const user = await response.json();
-            const name = `${user.firstName} ${user.lastName}`.trim() || user.email || "Unknown";
-            console.log(`Fetched owner name for user ID ${ownerId}: ${name}`);
-            return name || "TBD";
         }
          catch (error) {
             console.error('An error occurred while fetching the owner name', error);
@@ -93,20 +92,16 @@ export default function ClubDashboardClient({
 
         setIsPosting(true);
         try {
-            const response = await fetch(`/api/clubs/${club._id}/announcements`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    title: announcementFormData.title,
-                    description: announcementFormData.description,
-                    ownerId: currentUserId,
-                    clubID: club._id,
-                    eventId: announcementFormData.eventId || null,
-                }),
+            const result = await addAnnouncement(club._id, {
+                title: announcementFormData.title,
+                description: announcementFormData.description,
+                ownerId: currentUserId,
+                clubID: club._id,
+                eventId: announcementFormData.eventId || null,
             });
 
-            if (response.ok) {
-                const newAnnouncement = await response.json();
+            if (result.success) {
+                const newAnnouncement = result.data;
                 setClubAnnouncements([newAnnouncement, ...clubAnnouncements]);
                 setAnnouncementFormData({ title: "", description: "", eventId: "" });
                 setShowAnnouncementForm(false);
@@ -127,11 +122,9 @@ export default function ClubDashboardClient({
 
         setIsDeleting(announcementId);
         try {
-            const response = await fetch(`/api/clubs/${club._id}/announcements/${announcementId}`, {
-                method: "DELETE",
-            });
+            const result = await removeAnnouncement(announcementId, club._id);
 
-            if (response.ok) {
+            if (result.success) {
                 setClubAnnouncements(clubAnnouncements.filter((a) => String(a._id) !== String(announcementId)));
                 alert("Announcement deleted successfully!");
             } else {
@@ -147,14 +140,10 @@ export default function ClubDashboardClient({
 
     const handleEditAnnouncement = async (announcementId, updatedData) => {
         try {
-            const response = await fetch(`/api/clubs/${club._id}/announcements/${announcementId}`, {
-                method: "PUT",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(updatedData),
-            });
+            const result = await modifyAnnouncement(announcementId, updatedData);
 
-            if (response.ok) {
-                const updatedAnnouncement = await response.json();
+            if (result.success) {
+                const updatedAnnouncement = result.data;
                 setClubAnnouncements(
                     clubAnnouncements.map((a) =>
                         String(a._id) === String(announcementId) ? updatedAnnouncement : a
@@ -184,22 +173,18 @@ export default function ClubDashboardClient({
 
         setIsPosting(true);
         try {
-            const response = await fetch("/api/events", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    name: eventFormData.name,
-                    description: eventFormData.description,
-                    date: new Date(eventFormData.date).toISOString(),
-                    location: eventFormData.location || "TBD",
-                    club: club.name,
-                    ownerId: currentUserId,
-                    visibility: "private",
-                }),
+            const result = await addEvent({
+                name: eventFormData.name,
+                description: eventFormData.description,
+                date: new Date(eventFormData.date).toISOString(),
+                location: eventFormData.location || "TBD",
+                club: club.name,
+                ownerId: currentUserId,
+                visibility: "private",
             });
 
-            if (response.ok) {
-                const newEvent = await response.json();
+            if (result.success) {
+                const newEvent = result.data;
                 setClubEvents([newEvent, ...clubEvents]);
                 setEventFormData({
                     name: "",
@@ -225,11 +210,9 @@ export default function ClubDashboardClient({
 
         setIsDeleting(eventId);
         try {
-            const response = await fetch(`/api/events/${eventId}`, {
-                method: "DELETE",
-            });
+            const result = await removeEvent(eventId);
 
-            if (response.ok) {
+            if (result.success) {
                 setClubEvents(clubEvents.filter((e) => String(e._id) !== String(eventId)));
                 alert("Event deleted successfully!");
             } else {
@@ -249,11 +232,9 @@ export default function ClubDashboardClient({
 
         setIsLeavingClub(true);
         try {
-            const response = await fetch(`/api/clubs/${club._id}/leave`, {
-                method: "POST",
-            });
+            const result = await leaveClubAction(club._id, currentUserId);
 
-            if (response.ok) {
+            if (result.success) {
                 alert("You have successfully left the club");
                 window.location.href = "/dashboard/student";
             } else {
@@ -269,12 +250,9 @@ export default function ClubDashboardClient({
 
     const handleRegisterEvent = async (eventId) => {
         try {
-            const response = await fetch(`/api/events/${eventId}/register`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-            });
+            const result = await registerForEventAction(eventId, currentUserId);
 
-            if (response.ok) {
+            if (result.success) {
                 alert("Successfully registered for the event!");
                 window.location.reload();
             } else {
@@ -290,12 +268,9 @@ export default function ClubDashboardClient({
         if (!confirm("Are you sure you want to unregister from this event?")) return;
 
         try {
-            const response = await fetch(`/api/events/${eventId}/register`, {
-                method: "DELETE",
-                headers: { "Content-Type": "application/json" },
-            });
+            const result = await unregisterFromEventAction(eventId, currentUserId);
 
-            if (response.ok) {
+            if (result.success) {
                 alert("Successfully unregistered from the event!");
                 window.location.reload();
             } else {
@@ -328,19 +303,15 @@ export default function ClubDashboardClient({
 
         setIsFlagging(true);
         try {
-            const response = await fetch("/api/flags", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    flaggedById: currentUserId,
-                    contentId: flagTarget.item._id,
-                    type: flagTarget.type,
-                    reason: flagFormData.reason,
-                    description: flagFormData.description,
-                }),
+            const result = await addFlag({
+                flaggedById: currentUserId,
+                contentId: flagTarget.item._id,
+                type: flagTarget.type,
+                reason: flagFormData.reason,
+                description: flagFormData.description,
             });
 
-            if (response.ok) {
+            if (result.success) {
                 alert("Thank you for reporting this content. Our team will review it shortly.");
                 setShowFlagForm(false);
                 setFlagTarget(null);

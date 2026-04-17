@@ -3,13 +3,9 @@
 import { useState } from "react";
 
 export default function PasswordResetModal({ userId, userName, onClose, onSuccess }) {
-  const [step, setStep] = useState("confirm"); // confirm, otp-entry, password-reset, success
-  const [otp, setOtp] = useState("");
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const [step, setStep] = useState("confirm"); // confirm, success
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [generatedOtp, setGeneratedOtp] = useState("");
 
   const handleInitiateReset = async () => {
     setLoading(true);
@@ -28,9 +24,10 @@ export default function PasswordResetModal({ userId, userName, onClose, onSucces
       const data = await res.json();
 
       if (res.ok) {
-        // In a real app, the OTP would be sent via email
-        setGeneratedOtp(data.result.otp);
-        setStep("otp-entry");
+        setStep("success");
+        setTimeout(() => {
+          onSuccess && onSuccess();
+        }, 2000);
       } else {
         setError(data.message || "Failed to initiate password reset");
       }
@@ -42,48 +39,6 @@ export default function PasswordResetModal({ userId, userName, onClose, onSucces
     }
   };
 
-  const handleResetPassword = async () => {
-    if (newPassword !== confirmPassword) {
-      setError("Passwords do not match");
-      return;
-    }
-
-    if (newPassword.length < 6) {
-      setError("Password must be at least 6 characters");
-      return;
-    }
-
-    setLoading(true);
-    setError("");
-
-    try {
-      const res = await fetch("/api/users/password-reset/reset", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          userId: userId,
-          otp: otp,
-          newPassword: newPassword,
-        }),
-      });
-
-      const data = await res.json();
-
-      if (res.ok) {
-        setStep("success");
-        setTimeout(() => {
-          onSuccess && onSuccess();
-        }, 2000);
-      } else {
-        setError(data.message || "Failed to reset password");
-      }
-    } catch (err) {
-      setError("An error occurred");
-      console.error("Error:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
@@ -110,15 +65,15 @@ export default function PasswordResetModal({ userId, userName, onClose, onSucces
         {step === "confirm" && (
           <div className="space-y-4">
             <p className="text-slate-700">
-              A one-time password (OTP) will be generated and displayed. The user
-              can use this OTP to reset their password.
+              A one-time password (OTP) will be sent to the user's email address. 
+              They can use this OTP to reset their password.
             </p>
             <button
               onClick={handleInitiateReset}
               disabled={loading}
               className="w-full rounded-lg bg-[#e05c5c] px-4 py-3 text-sm font-semibold text-white transition hover:bg-[#c94a4a] disabled:bg-gray-400"
             >
-              {loading ? "Generating OTP..." : "Generate OTP"}
+              {loading ? "Sending OTP..." : "Send OTP to User Email"}
             </button>
             <button
               onClick={onClose}
@@ -129,60 +84,13 @@ export default function PasswordResetModal({ userId, userName, onClose, onSucces
           </div>
         )}
 
-        {step === "otp-entry" && (
-          <div className="space-y-4">
-            <div className="rounded-lg bg-blue-50 p-4 border border-blue-200">
-              <p className="text-sm text-blue-800">
-                <strong>OTP for user:</strong> {generatedOtp}
-              </p>
-              <p className="text-xs text-blue-700 mt-2">
-                Share this OTP with the user. It will expire in 15 minutes.
-              </p>
-            </div>
-
-            <input
-              type="text"
-              placeholder="Enter OTP (for verification)"
-              value={otp}
-              onChange={(e) => setOtp(e.target.value)}
-              className="w-full rounded-lg border border-[#d4b18b] bg-white px-4 py-3 text-slate-900 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-[#e05c5c]"
-              required
-            />
-
-            <input
-              type="password"
-              placeholder="New Password"
-              value={newPassword}
-              onChange={(e) => setNewPassword(e.target.value)}
-              className="w-full rounded-lg border border-[#d4b18b] bg-white px-4 py-3 text-slate-900 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-[#e05c5c]"
-              required
-            />
-
-            <input
-              type="password"
-              placeholder="Confirm New Password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              className="w-full rounded-lg border border-[#d4b18b] bg-white px-4 py-3 text-slate-900 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-[#e05c5c]"
-              required
-            />
-
-            <button
-              onClick={handleResetPassword}
-              disabled={loading}
-              className="w-full rounded-lg bg-[#e05c5c] px-4 py-3 text-sm font-semibold text-white transition hover:bg-[#c94a4a] disabled:bg-gray-400"
-            >
-              {loading ? "Resetting..." : "Reset Password"}
-            </button>
-          </div>
-        )}
-
         {step === "success" && (
           <div className="space-y-4 text-center">
             <div className="text-4xl">✓</div>
-            <p className="text-slate-700 font-semibold">Password reset successfully!</p>
+            <p className="text-slate-700 font-semibold">OTP sent successfully!</p>
             <p className="text-sm text-slate-600">
-              The user can now log in with their new password.
+              An OTP has been sent to the user's email. 
+              They will have 15 minutes to use it to reset their password.
             </p>
           </div>
         )}

@@ -2,6 +2,7 @@
 import User from "@/models/User";
 import { withDB } from "@/lib/mongodb";
 import { Resend } from "resend";
+import bcrypt from "bcryptjs";
 
 const ResendInstance = new Resend(process.env.RESEND_API_KEY);
 
@@ -16,8 +17,11 @@ const sendResetInstructions = withDB(async (email) => {
 
     // Generate 10 character OTP and send reset instructions here
     const otp = Math.random().toString(36).substring(2, 12).toUpperCase();
-    user.otp = otp;
+    const hashedOtp = await bcrypt.hash(otp, 10);
+    user.otp = hashedOtp;
     user.otpExpiry = Date.now() + 15 * 60 * 1000; // OTP valid for 15 minutes
+    user.requiresOTP = true;
+    
     await user.save();
     console.log(`OTP for ${email}: ${otp}`);
 

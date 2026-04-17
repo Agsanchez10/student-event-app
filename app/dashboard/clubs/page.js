@@ -29,7 +29,10 @@ export default async function ClubFinderPage() {
     const cookieStore = await cookies();
     const token = cookieStore.get("token")?.value;
     const rawUser = await getCurrentUser(token);
-    const user = rawUser ? JSON.parse(JSON.stringify(rawUser)) : null;
+    const user = rawUser ? {
+        _id: rawUser._id,
+        ...JSON.parse(JSON.stringify(rawUser))
+    } : null;
 
     if (!user) {
         return (
@@ -51,7 +54,7 @@ export default async function ClubFinderPage() {
     const userMemberships = user.clubMemberships || [];
 
     const clubs_json = JSON.parse(JSON.stringify(clubs));
-    const user_json = JSON.parse(JSON.stringify(user));
+    const user_json = user; // Already properly serialized with _id preserved
 
     return (
         <ClubFinderClient

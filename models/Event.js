@@ -9,7 +9,8 @@ const EventSchema = new mongoose.Schema({
     clubId: { type: Number, ref: "Club" },
     visibility: { type: String, enum: ["public", "private"], default: "public" },
     ownerId: { type: Number, ref: "User" },
-    registrationList: [{ type: Number, ref: "User" }],
+    createdBy: { type: Number },
+    registrationList: [{ type: Number }],
     createdAt: {
         type: Date,
         default: Date.now,

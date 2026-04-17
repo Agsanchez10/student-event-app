@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { getPublicEvents } from "@/services/eventService";
 
+const ITEMS_PER_PAGE = 6;
+
 const formatDate = (value) => {
     if (!value) return "TBD";
     return new Date(value).toLocaleDateString("en-US", {
@@ -18,13 +20,19 @@ const formatTime = (value) => {
     });
 };
 
-export default async function PublicEventsPage() {
+export default async function PublicEventsPage({ searchParams }) {
     const events = await getPublicEvents();
     const today = new Date().toLocaleDateString("en-US", {
         month: "long",
         day: "numeric",
         year: "numeric",
-    });
+    }); 
+    const upcomingEvents = events.filter((event) => new Date(event.date) >= new Date(today));
+    
+    const currentPage = Number((await searchParams)?.eventPage) || 1;
+    const eventPageStart = (currentPage - 1) * ITEMS_PER_PAGE;
+    const totalPages = Math.max(1, Math.ceil(upcomingEvents.length / ITEMS_PER_PAGE));
+
 
 
     return (
@@ -49,67 +57,88 @@ export default async function PublicEventsPage() {
                 </section>
 
                 {/* Events Grid */}
-                {events.length === 0 ? (
+                {upcomingEvents.length === 0 ? (
                     <div className="rounded-3xl bg-white p-12 text-center shadow-lg ring-1 ring-slate-200 dark:bg-slate-900 dark:ring-slate-700">
                         <p className="text-lg text-slate-600 dark:text-slate-300">
                             No public events available at this time. Check back soon!
                         </p>
                     </div>
                 ) : (
+                    <>
                     <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                        {events
-                            .filter((event) => Date.parse(event.date) >= Date.parse(today))
+                        {upcomingEvents.slice(eventPageStart, eventPageStart + ITEMS_PER_PAGE)
                             .sort((a, b) => new Date(a.date) - new Date(b.date))
-                            .map((event) => (
+                            .map((upcomingEvents) => (
                             <div
-                                key={event._id}
+                                key={upcomingEvents._id}
                                 className="rounded-2xl bg-white p-6 shadow-md ring-1 ring-slate-200 transition hover:shadow-lg dark:bg-slate-900 dark:ring-slate-700"
                             >
                                 {/* Event Date Badge */}
                                 <div className="mb-4 inline-flex rounded-lg bg-red-100 px-3 py-1 text-xs font-semibold text-red-700 dark:bg-red-900/30 dark:text-red-300">
-                                    {formatDate(event.date)}
+                                    {formatDate(upcomingEvents.date)}
                                 </div>
 
                                 {/* Event Title */}
                                 <h3 className="text-xl font-bold text-slate-950 dark:text-white line-clamp-2">
-                                    {event.name || "Untitled Event"}
+                                    {upcomingEvents.name || "Untitled Event"}
                                 </h3>
 
                                 {/* Event Details */}
                                 <div className="mt-4 space-y-2 text-sm text-slate-600 dark:text-slate-300">
-                                    {event.location && (
+                                    {upcomingEvents.location && (
                                         <p>
                                             <span className="font-semibold text-slate-900 dark:text-white">Location:</span>{" "}
-                                            {event.location}
+                                            {upcomingEvents.location}
                                         </p>
                                     )}
-                                    {event.date && (
+                                    {upcomingEvents.date && (
                                         <p>
                                             <span className="font-semibold text-slate-900 dark:text-white">Time:</span>{" "}
-                                            {formatTime(event.date)}
+                                            {formatTime(upcomingEvents.date)}
                                         </p>
                                     )}
-                                    {event.club && (
+                                    {upcomingEvents.club && (
                                         <p>
                                             <span className="font-semibold text-slate-900 dark:text-white">Club:</span>{" "}
-                                            {event.club}
+                                            {upcomingEvents.club}
                                         </p>
                                     )}
                                 </div>
 
                                 {/* Event Description */}
-                                {event.description && (
+                                {upcomingEvents.description && (
                                     <p className="mt-4 line-clamp-3 text-sm text-slate-600 dark:text-slate-400">
-                                        {event.description}
+                                        {upcomingEvents.description}
                                     </p>
-                                )}
-
-                               
+                                )}                               
                             </div>
                         ))}
                     </div>
-                )}
 
+                  
+                    {totalPages > 1 && (
+                        <div className="mt-8 flex justify-center space-x-2">
+                            <Link  
+                                href={`/public/events?eventPage=${Math.max(1, currentPage - 1)}`}
+                                className={`rounded-md px-3 py-1 text-sm font-medium transition ${
+                                    currentPage === 1 ? "cursor-not-allowed bg-gray-300 text-gray-500" : "bg-slate-950 text-white hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-950 dark:hover:bg-slate-200"
+                                }`}
+                            >
+                                Previous
+                            </Link>
+                            <span className="px-3 py-1">Page {currentPage} of {totalPages}</span>
+                            <Link
+                                href={`/public/events?eventPage=${Math.min(totalPages, currentPage + 1)}`}
+                                className={`rounded-md px-3 py-1 text-sm font-medium transition ${currentPage === totalPages ? "cursor-not-allowed bg-gray-300 text-gray-500" : "bg-slate-950 text-white hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-950 dark:hover:bg-slate-200"
+                                }`}                  
+                            >
+                                Next
+                            </Link>
+                        </div>
+                    )}                   
+                </>
+                )}
+                
                 {/* Footer Info */}
                 <div className="mt-10 rounded-2xl bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800 p-6">
                     <p className="text-sm text-blue-900 dark:text-blue-100">

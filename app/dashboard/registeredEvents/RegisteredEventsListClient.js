@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { unregisterFromEventAction } from "@/app/actions/eventActions";
 
 const ITEMS_PER_PAGE = 10;
 
@@ -80,13 +81,8 @@ export default function RegisteredEventsListClient({ registeredEvents, currentUs
         setUnregisteringEvent(event._id);
 
         try {
-            const response = await fetch(`/api/events/${event._id}/register`, {
-                method: "DELETE",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-            });
-            if (response.ok) {
+            const result = await unregisterFromEventAction(event._id, currentUser._id);
+            if (result.success) {
                 router.refresh();
                 setSelectedEvent(null);
             } else {

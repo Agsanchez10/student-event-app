@@ -2,6 +2,8 @@
 
 import { useState, useMemo } from "react";
 import { useEffect } from "react";
+import { signCharterAction, removeSignatureAction, removeCharterAction, fetchUserCharters } from "@/app/actions/clubCharterActions";
+import { fetchUser } from "@/app/actions/userActions";
 
 const formatDate = (value) => {
     if (!value) return "TBD";
@@ -77,22 +79,15 @@ export default function PendingChartersClient({ charters = [], currentUser }) {
         setIsSigningId(charterId);
 
         try {
-            const response = await fetch(`/api/club-charters/${charterId}/sign`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                }
-            });
-
-            if (response.ok) {
-                const updatedCharter = await response.json();
+            const result = await signCharterAction(charterId, currentUser._id);
+            if (result.success) {
+                const updatedCharter = result.data;
                 setChartersState(chartersState.map(c => c._id === charterId ? updatedCharter : c));
                 if (selectedCharter?._id === charterId) {
                     setSelectedCharter(updatedCharter);
                 }
             } else {
-                const error = await response.json();
-                alert(`Failed to sign charter: ${error.error}`);
+                alert(`Failed to sign charter: ${result.error}`);
             }
         } catch (error) {
             alert('An error occurred while signing the charter');
@@ -108,22 +103,15 @@ export default function PendingChartersClient({ charters = [], currentUser }) {
         setIsRemovingSignatureId(charterId);
 
         try {
-            const response = await fetch(`/api/club-charters/${charterId}/remove-signature`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                }
-            });
-
-            if (response.ok) {
-                const updatedCharter = await response.json();
+            const result = await removeSignatureAction(charterId, currentUser._id);
+            if (result.success) {
+                const updatedCharter = result.data;
                 setChartersState(chartersState.map(c => c._id === charterId ? updatedCharter : c));
                 if (selectedCharter?._id === charterId) {
                     setSelectedCharter(updatedCharter);
                 }
             } else {
-                const error = await response.json();
-                alert(`Failed to remove signature: ${error.error}`);
+                alert(`Failed to remove signature: ${result.error}`);
             }
         } catch (error) {
             alert('An error occurred while removing your signature');
@@ -140,54 +128,37 @@ export default function PendingChartersClient({ charters = [], currentUser }) {
         setIsDeletingId(charterId);
 
         try {
-        const response = await fetch(`/api/club-charters/${charterId}`, {
-            method: "DELETE",
-        });
-
-        setIsDeletingId(null);
-
-        if (response.ok) {
-            setSelectedCharter(null);
-            setChartersState((current) => current.filter((charter) => String(charter._id) !== String(charterId)));
-            
-        } else {
-            const error = await response.json();
-            console.error("Unable to cancel charter:", error);
-            window.alert("Failed to cancel charter. Please try again.");
-        }
+            const result = await removeCharterAction(charterId, currentUser._id);
+            if (result.success) {
+                setSelectedCharter(null);
+                setChartersState((current) => current.filter((charter) => String(charter._id) !== String(charterId)));
+            } else {
+                console.error("Unable to cancel charter:", result.error);
+                window.alert("Failed to cancel charter. Please try again.");
+            }
         } catch (error) {
-            setIsDeletingId(null);
             console.error("An error occurred while cancelling the charter:", error);
             window.alert("An unexpected error occurred. Please try again.");
         } finally {
             setIsDeletingId(null);
         }
-
     };
 
     const getOwnerName = async (initiatorId) => {
-         try {
-            const response = await fetch(`/api/users/${initiatorId}`, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                }
-            });
-
-            if(!response.ok) {
+        try {
+            const result = await fetchUser(initiatorId);
+            if (result.success) {
+                const user = result.data;
+                const name = user.firstName + " " + user.lastName;
+                console.log(`Fetched owner name for user ID ${initiatorId}: ${name}`);
+                return name || "TBD";
+            } else {
                 throw new Error('Failed to fetch owner name');
             }
-
-            const user = await response.json();
-            const name = user.firstName + " " + user.lastName;
-            console.log(`Fetched owner name for user ID ${initiatorId}: ${name}`);
-            return name || "TBD";
-        }
-         catch (error) {
+        } catch (error) {
             console.error('An error occurred while fetching the owner name', error);
             return "TBD";
         }
-        
     }
 
     const totalPages = Math.max(1, Math.ceil(sortedCharters.length / ITEMS_PER_PAGE));

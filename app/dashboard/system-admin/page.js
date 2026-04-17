@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { fetchUsers, createAdminUser } from "@/app/actions/userActions";
 
 export default function SystemAdminDashboard() {
   const [stats, setStats] = useState({
@@ -26,9 +27,9 @@ export default function SystemAdminDashboard() {
 
   const fetchStats = async () => {
     try {
-      const res = await fetch("/api/users");
-      if (res.ok) {
-        const data = await res.json();
+      const result = await fetchUsers();
+      if (result.success) {
+        const data = result.data;
         setUsers(data);
         
         const totalStudents = data.filter(u => u.role === "Student").length;
@@ -52,20 +53,15 @@ export default function SystemAdminDashboard() {
   const handleCreateAdmin = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch("/api/users/admin/create", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
+      const result = await createAdminUser(formData);
       
-      if (res.ok) {
+      if (result.success) {
         alert("College Admin created successfully!");
         setFormData({ firstName: "", lastName: "", email: "", password: "" });
         setShowCreateForm(false);
         fetchStats();
       } else {
-        const error = await res.json();
-        alert(`Error: ${error.message}`);
+        alert(`Error: ${result.error}`);
       }
     } catch (error) {
       console.error("Error creating admin:", error);

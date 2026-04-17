@@ -27,18 +27,21 @@ const normalizeEvent = (event) => ({
     _id: event._id,
     name: event.name,
     description: event.description,
-    date: event.date ? event.date.toISOString() : null,
+    date: event.date ? (typeof event.date === 'string' ? event.date : event.date.toISOString()) : null,
     location: event.location,
     ownerId: event.ownerId,
     registrationList: event.registrationList,
-    createdAt: event.createdAt ? event.createdAt.toISOString() : null,
+    createdAt: event.createdAt ? (typeof event.createdAt === 'string' ? event.createdAt : event.createdAt.toISOString()) : null,
 });
 
 export default async function RegisteredEventsPage() {
     const cookieStore = await cookies();
     const token = cookieStore.get("token")?.value;
     const rawUser = await getCurrentUser(token);
-    const user = rawUser ? JSON.parse(JSON.stringify(rawUser)) : null;
+    const user = rawUser ? {
+        _id: rawUser._id,
+        ...JSON.parse(JSON.stringify(rawUser))
+    } : null;
 
     if (!user) {
         redirect("/login");

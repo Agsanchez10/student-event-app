@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { modifyFlag } from "@/app/actions/flagActions";
+import { deactivateUserAccount } from "@/app/actions/userActions";
 
 export default function FlaggedContentClient({ initialFlags }) {
     const [flags, setFlags] = useState(initialFlags || []);
@@ -41,16 +43,12 @@ export default function FlaggedContentClient({ initialFlags }) {
 
         setIsSaving(true);
         try {
-            const response = await fetch(`/api/flags/${selectedFlag._id}`, {
-                method: "PUT",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    adminNotes: adminNotes,
-                }),
+            const result = await modifyFlag(selectedFlag._id, {
+                adminNotes: adminNotes,
             });
 
-            if (response.ok) {
-                const updatedFlag = await response.json();
+            if (result.success) {
+                const updatedFlag = result.data;
                 setFlags(flags.map(f => f._id === selectedFlag._id ? updatedFlag : f));
                 setSelectedFlag(updatedFlag);
                 alert("Notes saved successfully!");
@@ -109,12 +107,8 @@ export default function FlaggedContentClient({ initialFlags }) {
 
         setIsSuspending(true);
         try {
-            const response = await fetch(`/api/users/${selectedFlag.flaggedById}/deactivate`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-            });
-
-            if (response.ok) {
+            const result = await deactivateUserAccount(selectedFlag.flaggedById);
+            if (result.success) {
                 await markAsResolved("user_suspended");
                 alert("User suspended successfully!");
             } else {
@@ -130,19 +124,15 @@ export default function FlaggedContentClient({ initialFlags }) {
 
     const markAsResolved = async (resolution) => {
         try {
-            const response = await fetch(`/api/flags/${selectedFlag._id}`, {
-                method: "PUT",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    isResolved: true,
-                    resolution: resolution,
-                    dateResolved: new Date().toISOString(),
-                    resolvedBy: parseInt(localStorage.getItem("userId") || "1"),
-                    adminNotes: adminNotes,
-                }),
+            const result = await modifyFlag(selectedFlag._id, {
+                isResolved: true,
+                resolution: resolution,
+                dateResolved: new Date().toISOString(),
+                resolvedBy: parseInt(localStorage.getItem("userId") || "1"),
+                adminNotes: adminNotes,
             });
 
-            if (response.ok) {
+            if (result.success) {
                 setFlags(flags.filter(f => f._id !== selectedFlag._id));
                 setSelectedFlag(null);
                 setAdminNotes("");

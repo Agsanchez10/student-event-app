@@ -11,11 +11,11 @@ const normalizeEvent = (event) => ({
     _id: event._id,
     name: event.name,
     description: event.description,
-    date: event.date ? event.date.toISOString() : null,
+    date: event.date ? (typeof event.date === 'string' ? event.date : event.date.toISOString()) : null,
     location: event.location,
     ownerId: event.ownerId,
     registrationList: event.registrationList,
-    createdAt: event.createdAt ? event.createdAt.toISOString() : null,
+    createdAt: event.createdAt ? (typeof event.createdAt === 'string' ? event.createdAt : event.createdAt.toISOString()) : null,
 });
 
 const getCurrentUser = withDB(async (token) => {
@@ -35,7 +35,10 @@ export default async function EventList() {
     const cookieStore = await cookies();
     const token = cookieStore.get("token")?.value;
     const user = token ? await getCurrentUser(token) : null;
-    const plainUser = user ? JSON.parse(JSON.stringify(user)) : null;
+    const plainUser = user ? {
+        _id: user._id,
+        ...JSON.parse(JSON.stringify(user))
+    } : null;
 
     if (!user) {
         redirect("/login");

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { addClubCharter } from "@/app/actions/clubCharterActions";
 
 export default function ClubCharterForm({ user }) {
     const [formData, setFormData] = useState({
@@ -19,19 +20,11 @@ export default function ClubCharterForm({ user }) {
     const handleSubmit = async (event) => {
         event.preventDefault();
 
-        const response = await fetch("/api/club-charters", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(formData),
-        });
-
-        if (response.ok) {
+        const result = await addClubCharter(formData);
+        if (result.success) {
             setSubmitted(true);
         } else {
-            const error = await response.json();
-            console.error("Failed to submit charter:", error);
+            console.error("Failed to submit charter:", result.error);
             alert("Unable to submit charter. Please try again.");
         }
     };

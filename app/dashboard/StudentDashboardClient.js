@@ -3,6 +3,7 @@
 import { useState } from "react";
 import RegisteredEventsClient from "./RegisteredEventsClient";
 import ClubCharterActivityClient from "./ClubCharterActivityClient";
+import { addFlag } from "@/app/actions/flagActions";
 
 export default function StudentDashboardClient({
   studentEvents,
@@ -68,19 +69,15 @@ export default function StudentDashboardClient({
 
     setIsFlagging(true);
     try {
-      const response = await fetch("/api/flags", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          flaggedById: currentUser,
-          contentId: flagTarget.item._id,
-          type: flagTarget.type,
-          reason: flagFormData.reason,
-          description: flagFormData.description,
-        }),
+      const response = await addFlag({
+        flaggedById: currentUser,
+        contentId: flagTarget.item._id,
+        type: flagTarget.type,
+        reason: flagFormData.reason,
+        description: flagFormData.description,
       });
 
-      if (response.ok) {
+      if (response.success) {
         alert("Thank you for reporting this content. Our team will review it shortly.");
         setShowFlagForm(false);
         setFlagTarget(null);
