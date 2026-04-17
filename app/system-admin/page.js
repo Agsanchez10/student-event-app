@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { fetchUsers } from "@/app/actions/userActions";
+import { createAdminUser, deactivateUserAccount } from "@/app/actions/userActions";
 
 export default function SystemAdminDashboard() {
   const [stats, setStats] = useState({
@@ -26,9 +28,9 @@ export default function SystemAdminDashboard() {
 
   const fetchStats = async () => {
     try {
-      const res = await fetch("/api/users");
-      if (res.ok) {
-        const data = await res.json();
+      const res = await fetchUsers();
+      if (res.success) {
+        const data = res.data;
         setUsers(data);
         
         const totalStudents = data.filter(u => u.role === "Student").length;
@@ -52,20 +54,15 @@ export default function SystemAdminDashboard() {
   const handleCreateAdmin = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch("/api/users/admin/create", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
+      const res = await createAdminUser(formData);
       
-      if (res.ok) {
+      if (res.success) {
         alert("College Admin created successfully!");
         setFormData({ firstName: "", lastName: "", email: "", password: "" });
         setShowCreateForm(false);
         fetchStats();
       } else {
-        const error = await res.json();
-        alert(`Error: ${error.message}`);
+        alert(`Error: ${res.error}`);
       }
     } catch (error) {
       console.error("Error creating admin:", error);
@@ -75,17 +72,9 @@ export default function SystemAdminDashboard() {
 
   const handleToggleUserStatus = async (userId, isActive) => {
     try {
-      const endpoint = isActive 
-        ? "/api/users/admin/deactivate" 
-        : "/api/users/admin/activate";
+      const res = await deactivateUserAccount(userId);
       
-      const res = await fetch(endpoint, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId }),
-      });
-      
-      if (res.ok) {
+      if (res.success) {
         fetchStats();
       } else {
         alert("Failed to update user status");

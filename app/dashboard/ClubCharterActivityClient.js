@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
+import { removeCharterAction } from "@/app/actions/clubCharterActions";
 
 export default function ClubCharterActivityClient({ charters, currentPage, itemsPerPage, currentUserId }) {
     const [activeCharters, setActiveCharters] = useState(charters || []);
@@ -22,19 +23,19 @@ export default function ClubCharterActivityClient({ charters, currentPage, items
 
         setIsDeletingId(charterId);
 
-        const response = await fetch(`/api/club-charters/${charterId}`, {
-            method: "DELETE",
-        });
-
-        setIsDeletingId(null);
-
-        if (response.ok) {
-            setActiveCharters((current) => current.filter((charter) => String(charter._id) !== String(charterId)));
-            
-        } else {
-            const error = await response.json();
-            console.error("Unable to cancel charter:", error);
-            window.alert("Failed to cancel charter. Please try again.");
+        try {
+            const result = await removeCharterAction(charterId, currentUserId);
+            if (result.success) {
+                setActiveCharters((current) => current.filter((charter) => String(charter._id) !== String(charterId)));
+            } else {
+                console.error("Unable to cancel charter:", result.error);
+                window.alert("Failed to cancel charter. Please try again.");
+            }
+        } catch (error) {
+            console.error("An error occurred while cancelling the charter:", error);
+            window.alert("An unexpected error occurred. Please try again.");
+        } finally {
+            setIsDeletingId(null);
         }
     };
 

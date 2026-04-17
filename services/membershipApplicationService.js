@@ -11,7 +11,7 @@ export const getMembershipApplications = withDB(async (clubID) => {
 });
 
 export const createMembershipApplication = withDB(async (clubID, userId, userName, userEmail) => {
-    const lastID = await MembershipApplication.findOne().sort({ _id: -1 });
+    const lastID = await MembershipApplication.findOne().sort({ _id: -1 }).lean();
     const newId = lastID ? lastID._id + 1 : 1;
 
     const application = await MembershipApplication.create({
@@ -24,48 +24,48 @@ export const createMembershipApplication = withDB(async (clubID, userId, userNam
     });
 
     // Add to club's membership applications
-    await Club.findByIdAndUpdate(
-        clubID,
+    await Club.findOneAndUpdate(
+        { _id: Number(clubID) },
         { $addToSet: { membershipApplications: newId } },
-        { new: true }
+        { returnDocument: "after" }
     );
 
-    return application;
+    return application.toObject();
 });
 
 export const approveMembershipApplication = withDB(async (applicationID, userId, clubID) => {
-    const application = await MembershipApplication.findByIdAndUpdate(
-        applicationID,
+    const application = await MembershipApplication.findOneAndUpdate(
+        { _id: Number(applicationID) },
         { status: "approved" },
-        { new: true }
-    );
+        { returnDocument: "after" }
+    ).lean();
 
     if (!application) {
         throw new Error("Application not found");
     }
 
     // Add user to club membership
-    await Club.findByIdAndUpdate(
-        clubID,
+    await Club.findOneAndUpdate(
+        { _id: Number(clubID) },
         { $addToSet: { memberList: Number(userId) } },
-        { new: true }
+        { returnDocument: "after" }
     );
 
     return application;
 });
 
 export const rejectMembershipApplication = withDB(async (applicationID, clubID) => {
-    const application = await MembershipApplication.findByIdAndDelete(applicationID);
+    const application = await MembershipApplication.findOneAndDelete({ _id: Number(applicationID) }).lean();
     
     if (!application) {
         throw new Error("Application not found");
     }
 
     // Remove from club's membership applications
-    await Club.findByIdAndUpdate(
-        clubID,
-        { $pull: { membershipApplications: applicationID } },
-        { new: true }
+    await Club.findOneAndUpdate(
+        { _id: Number(clubID) },
+        { $pull: { membershipApplications: Number(applicationID) } },
+        { returnDocument: "after" }
     );
 
     return application;

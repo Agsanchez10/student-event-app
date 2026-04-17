@@ -65,7 +65,10 @@ export default async function Dashboard({ searchParams }) {
     const cookieStore = await cookies();
     const token = cookieStore.get("token")?.value;
     const rawUser = await getCurrentUser(token);
-    const user = rawUser ? JSON.parse(JSON.stringify(rawUser)) : null;
+    const user = rawUser ? {
+        _id: rawUser._id,
+        ...JSON.parse(JSON.stringify(rawUser))
+    } : null;
     const params = await searchParams;
 
     if (!user) {

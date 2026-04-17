@@ -1,14 +1,11 @@
-import { NextResponse } from "next/server";
-import { getUsers, createUser } from "@/services/userService";
+// DEPRECATED: This route has been migrated to server actions in /app/actions/userActions.js
+// Use fetchUsers() server action instead
+// File kept for reversion purposes
 
-export async function GET(req) {
-    const users = await getUsers();
-    return NextResponse.json(users, { status: 200 });
-}
-
-export async function POST(req) {
-    const body = await req.json();
-    const user = await createUser(body);
-    return NextResponse.json(user, { status : 201 });
+export async function GET() {
+  return new Response(
+    JSON.stringify({ error: "This endpoint has been deprecated. Use server actions instead." }),
+    { status: 410, headers: { "Content-Type": "application/json" } }
+  );
 }
 

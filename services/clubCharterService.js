@@ -2,13 +2,11 @@ import { withDB } from "@/lib/mongodb";
 import ClubCharter from "@/models/ClubCharter";
 
 export const createClubCharter = withDB(async (body) => {
-    const lastID = await ClubCharter.findOne().sort({ _id: -1 });
+    const lastID = await ClubCharter.findOne().sort({ _id: -1 }).lean();
     const newId = lastID ? lastID._id + 1 : 1;
 
-    
-
     const charter = await ClubCharter.create({ ...body, _id: newId, signatures: [body.initiatorId], status: "collecting" });
-    return charter;
+    return charter.toObject();
 });
 
 export const getClubChartersForUser = withDB(async (userId) => {
@@ -21,26 +19,33 @@ export const getClubChartersForUser = withDB(async (userId) => {
 });
 
 export const signClubCharter = withDB(async (charterId, userId) => {
-    const charter = await ClubCharter.findOne({ _id: Number(charterId) });
+    const charter = await ClubCharter.findOne({ _id: Number(charterId) }).lean();
     if (!charter) {
         throw new Error("404: Charter not found");
     }
 
     const signerId = Number(userId);
-    if (!charter.signatures.includes(signerId)) {
-        charter.signatures.push(signerId);
+    const alreadySigned = charter.signatures.includes(signerId);
+    const newLength = alreadySigned ? charter.signatures.length : charter.signatures.length + 1;
+    const newStatus = newLength >= 10 && charter.status === "collecting" ? "submitted" : charter.status;
+    
+    const update = {};
+    if (!alreadySigned) {
+        update.$push = { signatures: signerId };
     }
+    update.$set = { status: newStatus };
 
-    if (charter.signatures.length >= 10 && charter.status === "collecting") {
-        charter.status = "submitted";
-    }
-
-    await charter.save();
-    return charter;
+    const result = await ClubCharter.findOneAndUpdate(
+        { _id: Number(charterId) },
+        update,
+        { returnDocument: "after" }
+    ).lean();
+    
+    return result;
 });
 
 export const deleteClubCharter = withDB(async (charterId, userId) => {
-    const charter = await ClubCharter.findOne({ _id: Number(charterId) });
+    const charter = await ClubCharter.findOne({ _id: Number(charterId) }).lean();
     if (!charter) {
         throw new Error("404: Charter not found");
     }
@@ -65,21 +70,55 @@ export const getAllCharters = withDB(async () => {
 });
 
 export const removeSignatureFromCharter = withDB(async (charterId, userId) => {
-    const charter = await ClubCharter.findOne({ _id: Number(charterId) });
+    const charter = await ClubCharter.findOne({ _id: Number(charterId) }).lean();
     if (!charter) {
         throw new Error("404: Charter not found");
     }
 
     const signerId = Number(userId);
-    const index = charter.signatures.indexOf(signerId);
-    if (index > -1) {
-        charter.signatures.splice(index, 1);
+    const hadSignature = charter.signatures.includes(signerId);
+    const newLength = hadSignature ? charter.signatures.length - 1 : charter.signatures.length;
+    const newStatus = newLength < 10 && charter.status === "submitted" ? "collecting" : charter.status;
+    
+    const update = {};
+    if (hadSignature) {
+        update.$pull = { signatures: signerId };
     }
+    update.$set = { status: newStatus };
 
-    if (charter.signatures.length < 10 && charter.status === "submitted") {
-        charter.status = "collecting";
+    const result = await ClubCharter.findOneAndUpdate(
+        { _id: Number(charterId) },
+        update,
+        { returnDocument: "after" }
+    ).lean();
+    
+    return result;
+});
+
+export const approveCharter = withDB(async (charterId) => {
+    const result = await ClubCharter.findOneAndUpdate(
+        { _id: Number(charterId) },
+        { status: "approved" },
+        { returnDocument: "after" }
+    ).lean();
+    
+    if (!result) {
+        throw new Error("404: Charter not found");
     }
+    
+    return result;
+});
 
-    await charter.save();
-    return charter;
+export const rejectCharter = withDB(async (charterId) => {
+    const result = await ClubCharter.findOneAndUpdate(
+        { _id: Number(charterId) },
+        { status: "rejected" },
+        { returnDocument: "after" }
+    ).lean();
+    
+    if (!result) {
+        throw new Error("404: Charter not found");
+    }
+    
+    return result;
 });

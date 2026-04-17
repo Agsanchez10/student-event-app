@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { registerForEventAction, unregisterFromEventAction } from "@/app/actions/eventActions";
 
 const formatDate = (value) => {
     if (!value) return "TBD";
@@ -36,6 +37,7 @@ export default function EventListClient({ events, currentUser }) {
     const [filter, setFilter] = useState("");
     const [dateFilter, setDateFilter] = useState("");
     const [registeringEvents, setRegisteringEvents] = useState(new Set());
+    const [unregisteringEvents, setUnregisteringEvents] = useState(new Set());
     const router = useRouter();
 
     const filteredEvents = events.filter((event) => {
@@ -60,25 +62,42 @@ export default function EventListClient({ events, currentUser }) {
         setRegisteringEvents(prev => new Set(prev).add(eventId));
 
         try {
-            const response = await fetch(`/api/events/${eventId}/register`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',                    
-                },
-                body: JSON.stringify({ studentId: currentUser._id }),
-
-            });
-
-            if (response.ok) {
+            const response = await registerForEventAction(eventId, currentUser._id);
+            if (response.success) {
                 router.refresh();
             } else {
-                const error = await response.json();
-                alert(`Registration failed: ${error.error}`);
+                alert(`Registration failed: ${response.error}`);
             }
         } catch (error) {
             alert('An error occurred while registering for the event');
         } finally {
             setRegisteringEvents(prev => {
+                const newSet = new Set(prev);
+                newSet.delete(eventId);
+                return newSet;
+            });
+        }
+    };
+
+    const handleUnregister = async (eventId) => {
+        if (!currentUser) return;
+
+        const confirmed = window.confirm('Are you sure you want to unregister from this event?');
+        if (!confirmed) return;
+
+        setUnregisteringEvents(prev => new Set(prev).add(eventId));
+
+        try {
+            const response = await unregisterFromEventAction(eventId, currentUser._id);
+            if (response.success) {
+                router.refresh();
+            } else {
+                alert(`Unregistration failed: ${response.error}`);
+            }
+        } catch (error) {
+            alert('An error occurred while unregistering from the event');
+        } finally {
+            setUnregisteringEvents(prev => {
                 const newSet = new Set(prev);
                 newSet.delete(eventId);
                 return newSet;
@@ -150,9 +169,14 @@ export default function EventListClient({ events, currentUser }) {
                                             </button>
                                         )}
                                         {currentUser && isUserRegistered(event) && (
-                                            <span className="inline-flex items-center justify-center rounded-full bg-green-100 px-4 py-2 text-sm font-semibold text-green-800">
-                                                ✓ Registered
-                                            </span>
+                                            <button
+                                                type="button"
+                                                onClick={() => handleUnregister(event._id)}
+                                                disabled={unregisteringEvents.has(event._id)}
+                                                className="inline-flex items-center justify-center rounded-full bg-green-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-red-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                                            >
+                                                {unregisteringEvents.has(event._id) ? 'Unregistering...' : '✓ Registered - Click to unregister'}
+                                            </button>
                                         )}
                                     </div>
                                 </div>

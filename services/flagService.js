@@ -11,7 +11,7 @@ import Flag from "@/models/Flag";
  * @returns {Promise<Array>} All flag documents
  */
 export const getFlags = withDB(async () => {
-    const flags = await Flag.find({});
+    const flags = await Flag.find({}).lean();
     return flags;
 });
 
@@ -20,7 +20,7 @@ export const getFlags = withDB(async () => {
  * @returns {Promise<Array>} Unresolved flag documents
  */
 export const getUnresolvedFlags = withDB(async () => {
-    const flags = await Flag.find({ isResolved: false }).sort({ reportedAt: -1 });
+    const flags = await Flag.find({ isResolved: false }).sort({ reportedAt: -1 }).lean();
     return flags;
 });
 
@@ -31,7 +31,7 @@ export const getUnresolvedFlags = withDB(async () => {
  * @throws {Error} If flag not found
  */
 export const getFlag = withDB(async (flagid) => {
-    const flag = await Flag.findOne({ _id: Number(flagid) });
+    const flag = await Flag.findOne({ _id: Number(flagid) }).lean();
     if (!flag) {
         throw new Error("404: Flag not found");
     }
@@ -44,11 +44,11 @@ export const getFlag = withDB(async (flagid) => {
  * @returns {Promise<Object>} Newly created flag document
  */
 export const createFlag = withDB(async (body) => {
-    const lastID = await Flag.findOne().sort({ _id: -1 });
+    const lastID = await Flag.findOne().sort({ _id: -1 }).lean();
     const newId = lastID ? lastID._id + 1 : 1;
 
     const flag = await Flag.create({ ...body, _id: newId });
-    return flag;
+    return flag.toObject();
 });
 
 /**
@@ -58,7 +58,7 @@ export const createFlag = withDB(async (body) => {
  * @throws {Error} If flag not found
  */
 export const deleteFlag = withDB(async (flagid) => {
-    const flag = await Flag.findByIdAndDelete(flagid);
+    const flag = await Flag.findOneAndDelete({ _id: Number(flagid) }).lean();
 
     if (!flag) {
         throw new Error("404: Flag not found");
@@ -74,7 +74,7 @@ export const deleteFlag = withDB(async (flagid) => {
  * @throws {Error} If flag not found
  */
 export const updateFlag = withDB(async (flagid, body) => {
-    const flag = await Flag.findByIdAndUpdate(flagid, body, { new: true });
+    const flag = await Flag.findOneAndUpdate({ _id: Number(flagid) }, body, { returnDocument: "after" }).lean();
     if (!flag) {
         throw new Error("404: Flag not found");
     }

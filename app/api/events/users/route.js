@@ -1,25 +1,10 @@
-import { NextResponse } from "next/server";
-import { getUserEvents } from "@/services/eventService";
+// DEPRECATED: This route has been migrated to server actions in /app/actions/eventActions.js
+// Use fetchUserEvents() server action instead
+// File kept for reversion purposes
 
-export async function GET(req) {
-    try {
-        const { searchParams } = new URL(req.url);
-        const userId = searchParams.get("userId");
-
-        if (!userId) {
-            return NextResponse.json(
-                { error: "userId query parameter is required" },
-                { status: 400 }
-            );
-        }
-
-        const events = await getUserEvents(userId);
-        return NextResponse.json(events, { status: 200 });
-    } catch (error) {
-        console.error("Error fetching user events:", error);
-        return NextResponse.json(
-            { error: error.message },
-            { status: 500 }
-        );
-    }
+export async function GET() {
+  return new Response(
+    JSON.stringify({ error: "This endpoint has been deprecated. Use server actions instead." }),
+    { status: 410, headers: { "Content-Type": "application/json" } }
+  );
 }

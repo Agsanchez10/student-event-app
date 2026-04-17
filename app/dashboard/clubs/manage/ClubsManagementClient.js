@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { approveCharterAction, rejectCharterAction } from "@/app/actions/clubCharterActions";
 
 export default function ClubsManagementClient({
     clubs,
@@ -20,13 +21,9 @@ export default function ClubsManagementClient({
 
         setIsApproving(charterId);
         try {
-            const response = await fetch(`/api/club-charters/${charterId}/approve`, {
-                method: "PUT",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ status: "approved" }),
-            });
+            const result = await approveCharterAction(charterId);
 
-            if (response.ok) {
+            if (result.success) {
                 setChartersList(chartersList.filter((c) => String(c._id) !== String(charterId)));
                 alert("Charter approved successfully!");
             } else {
@@ -45,13 +42,9 @@ export default function ClubsManagementClient({
 
         setIsApproving(charterId);
         try {
-            const response = await fetch(`/api/club-charters/${charterId}/approve`, {
-                method: "PUT",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ status: "rejected" }),
-            });
+            const result = await rejectCharterAction(charterId);
 
-            if (response.ok) {
+            if (result.success) {
                 setChartersList(chartersList.filter((c) => String(c._id) !== String(charterId)));
                 alert("Charter rejected successfully!");
             } else {

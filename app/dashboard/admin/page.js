@@ -2,6 +2,10 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { fetchEvents } from "@/app/actions/eventActions";
+import { fetchClubs } from "@/app/actions/clubActions";
+import { fetchUsers } from "@/app/actions/userActions";
+import { fetchAllCharters } from "@/app/actions/clubCharterActions";
 
 export default function CollegeAdminDashboard() {
   const [stats, setStats] = useState({
@@ -16,16 +20,16 @@ export default function CollegeAdminDashboard() {
     const fetchStats = async () => {
       try {
         const [eventsRes, clubsRes, usersRes, chartersRes] = await Promise.all([
-          fetch("/api/events"),
-          fetch("/api/clubs"),
-          fetch("/api/users"),
-          fetch("/api/club-charters"),
+          fetchEvents(),
+          fetchClubs(),
+          fetchUsers(),
+          fetchAllCharters(),
         ]);
 
-        const events = eventsRes.ok ? await eventsRes.json() : [];
-        const clubs = clubsRes.ok ? await clubsRes.json() : [];
-        const users = usersRes.ok ? await usersRes.json() : [];
-        const charters = chartersRes.ok ? await chartersRes.json() : [];
+        const events = eventsRes.success ? eventsRes.data : [];
+        const clubs = clubsRes.success ? clubsRes.data : [];
+        const users = usersRes.success ? usersRes.data : [];
+        const charters = chartersRes.success ? chartersRes.data : [];
 
         setStats({
           totalEvents: events.length,

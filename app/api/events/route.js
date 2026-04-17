@@ -1,14 +1,11 @@
-import { NextResponse } from "next/server";
-import { getEvents, createEvent } from "@/services/eventService";
+// DEPRECATED: This route has been migrated to server actions in /app/actions/eventActions.js
+// Use fetchEvents() or addEvent() server actions instead
+// File kept for reversion purposes
 
-export async function GET(req) {
-    const events = await getEvents();
-    return NextResponse.json(events, { status: 200 });
-}
-
-export async function POST(req) {
-    const body = await req.json();
-    const event = await createEvent(body);
-    return NextResponse.json(event, { status : 201 });
+export async function GET() {
+  return new Response(
+    JSON.stringify({ error: "This endpoint has been deprecated. Use server actions instead." }),
+    { status: 410, headers: { "Content-Type": "application/json" } }
+  );
 }
 

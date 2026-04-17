@@ -6,9 +6,9 @@ const ClubCharterSchema = new mongoose.Schema({
     description: { type: String, required: true },
     purpose: { type: String },
     proposedOwner: { type: String },
-    initiatorId: { type: Number, ref: "User", required: true },
-    signatures: [{ type: Number, ref: "User" }],
-    clubId: { type: Number, ref: "Club" },
+    initiatorId: { type: Number, required: true },
+    signatures: [{ type: Number }],
+    clubId: { type: Number },
     status: {
         type: String,
         enum: ["draft", "collecting", "submitted", "approved", "rejected"],

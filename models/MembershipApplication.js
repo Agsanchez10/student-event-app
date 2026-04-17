@@ -2,8 +2,8 @@ import mongoose from "mongoose";
 
 const MembershipApplicationSchema = new mongoose.Schema({
     _id: { type: Number, required: true },
-    clubID: { type: Number, ref: "Club", required: true },
-    userId: { type: Number, ref: "User", required: true },
+    clubID: { type: Number, required: true },
+    userId: { type: Number, required: true },
     userName: String,
     userEmail: String,
     status: { type: String, enum: ["pending", "approved", "rejected"], default: "pending" },

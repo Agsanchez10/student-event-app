@@ -27,7 +27,7 @@ export const getRecentAnnouncementsByClubIds = withDB(async (clubIds) => {
 });
 
 export const createAnnouncement = withDB(async (clubID, data) => {
-    const lastID = await Announcement.findOne().sort({ _id: -1 });
+    const lastID = await Announcement.findOne().sort({ _id: -1 }).lean();
     const newId = lastID ? lastID._id + 1 : 1;
 
     const announcement = await Announcement.create({
@@ -37,21 +37,21 @@ export const createAnnouncement = withDB(async (clubID, data) => {
     });
 
     // Add to club's announcements
-    await Club.findByIdAndUpdate(
-        clubID,
+    await Club.findOneAndUpdate(
+        { _id: Number(clubID) },
         { $addToSet: { announcements: newId } },
-        { new: true }
+        { returnDocument: "after" }
     );
 
-    return announcement;
+    return announcement.toObject();
 });
 
 export const updateAnnouncement = withDB(async (announcementID, data) => {
-    const announcement = await Announcement.findByIdAndUpdate(
-        announcementID,
+    const announcement = await Announcement.findOneAndUpdate(
+        { _id: Number(announcementID) },
         data,
-        { new: true }
-    );
+        { returnDocument: "after" }
+    ).lean();
 
     if (!announcement) {
         throw new Error("Announcement not found");
@@ -61,17 +61,17 @@ export const updateAnnouncement = withDB(async (announcementID, data) => {
 });
 
 export const deleteAnnouncement = withDB(async (announcementID, clubID) => {
-    const announcement = await Announcement.findByIdAndDelete(announcementID);
+    const announcement = await Announcement.findOneAndDelete({ _id: Number(announcementID) }).lean();
 
     if (!announcement) {
         throw new Error("Announcement not found");
     }
 
     // Remove from club's announcements
-    await Club.findByIdAndUpdate(
-        clubID,
-        { $pull: { announcements: announcementID } },
-        { new: true }
+    await Club.findOneAndUpdate(
+        { _id: Number(clubID) },
+        { $pull: { announcements: Number(announcementID) } },
+        { returnDocument: "after" }
     );
 
     return announcement;

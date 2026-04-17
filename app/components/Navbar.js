@@ -43,10 +43,17 @@ export default function Navbar() {
       setIsLoggedIn(true);
       setShowLogin(false);
       
-      if(data.user?.role === "SystemAdmin") {
-        router.push("/admin/dashboard");
+      if(data.requiresOTP === true) {
+        router.push("/new-password");
         return;
       }
+
+      if(data.user?.role === "SystemAdmin") {
+        router.push("/system-admin");
+        return;
+      }
+
+      
   
        router.push("/dashboard");
 
@@ -164,9 +171,10 @@ export default function Navbar() {
                       </div>
                       <div className="text-sm">
                           <p>                            
-                            <Link href="/reset-password" className="font-medium text-[#e12b53] hover:text-[#c91f4a]">
+                            <Link href="/reset-password" onClick={() => setShowLogin(false)} className="font-medium text-[#e12b53] hover:text-[#c91f4a]">
                             Forgot your password?
                             </Link>
+                                                        
                           </p>
                       </div>
                   </div>
@@ -182,7 +190,7 @@ export default function Navbar() {
                      {error && <p className="text-red-500">{error}</p>}
                    </div>
                    <div className="text-sm text-center mt-4">
-                     <p className="text-gray-600">Don't have an account? <Link href="/register" className="text-[#e12b53] font-medium hover:text-[#c91f4a]">Register here</Link></p>
+                     <p className="text-gray-600" onClick={() => setShowLogin(false)}>Don't have an account? <Link href="/register" className="text-[#e12b53] font-medium hover:text-[#c91f4a]">Register here</Link></p>
                    </div>
                 </form>
             </div>

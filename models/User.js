@@ -14,13 +14,11 @@ const UserSchema = new mongoose.Schema(
         lastName: { type: String, required: true, trim: true },
         email: { type: String, required: true, unique: true, lowercase: true, trim: true },
         password: { type: String, required: true }, //, minlength: 6 },
-        role: { type: String, enum: ["Student", "CollegeAdmin", "SystemAdmin", "ClubOwner"], default: "Student", required: true },
-        // Password reset fields
-        resetToken: { type: String, default: null },
-        resetTokenExpiry: { type: Date, default: null },
+        role: { type: String, enum: ["Student", "CollegeAdmin", "SystemAdmin", "ClubOwner"], default: "Student", required: true },        
         // One-time password for password reset
         otp: { type: String, default: null },
         otpExpiry: { type: Date, default: null },
+        requiresOTP: { type: Boolean, default: false },
     }, baseOptions
 );
 
@@ -38,8 +36,8 @@ export const Student = mongoose.models.Student ??
     User.discriminator(
         "Student", 
         new mongoose.Schema({
-            clubMemberships:    [{ type: Number, ref: "Club" }],
-            eventRegistrations: [{ type: Number, ref: "Event" }],
+            clubMemberships:    [{ type: Number }],
+            eventRegistrations: [{ type: Number }],
         })
     );
 

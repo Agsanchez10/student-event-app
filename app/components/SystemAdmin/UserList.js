@@ -35,12 +35,14 @@ export default function UserList({ refreshTrigger }) {
 
   const getRoleColor = (role) => {
     switch (role) {
-      case "Admin":
-        return "bg-[#e05c5c]/20 text-[#a33b3b]";
+      case "CollegeAdmin":
+        return "bg-red-100 text-red-700";
       case "Student":
-        return "bg-blue-100 text-blue-700";
+        return "bg-green-50 text-green-700";
       case "ClubOwner":
         return "bg-purple-100 text-purple-700";
+      case "SystemAdmin":
+        return "bg-yellow-100 text-yellow-700";
       default:
         return "bg-gray-100 text-gray-700";
     }
@@ -48,8 +50,9 @@ export default function UserList({ refreshTrigger }) {
 
   const filteredUsers = users.filter((user) => {
     if (filter === "students") return user.role === "Student";
-    if (filter === "admins") return user.role === "Admin";
+    if (filter === "collegeAdmin") return user.role === "CollegeAdmin";
     if (filter === "clubowners") return user.role === "ClubOwner";
+    if (filter === "systemAdmin") return user.role === "SystemAdmin";
     return true;
   });
 
@@ -64,30 +67,39 @@ export default function UserList({ refreshTrigger }) {
   const stats = {
     total: users.length,
     students: users.filter((u) => u.role === "Student").length,
-    admins: users.filter((u) => u.role === "Admin").length,
+    collegeAdmins: users.filter((u) => u.role === "CollegeAdmin").length,
     clubowners: users.filter((u) => u.role === "ClubOwner").length,
+    systemAdmins: users.filter((u) => u.role === "SystemAdmin").length,
   };
 
   return (
     <>
       {/* Stats */}
-      <div className="grid gap-4 sm:grid-cols-4 mb-6">
+      <div className="  mb-6 gap-4">
         <div className="rounded-lg bg-blue-50 p-4 border border-blue-200">
           <p className="text-xs text-blue-700 uppercase font-semibold">Total Users</p>
           <p className="text-2xl font-bold text-blue-900 mt-2">{stats.total}</p>
         </div>
+        </div>
+        <div className="grid gap-4 sm:grid-cols-4  mb-6">
         <div className="rounded-lg bg-green-50 p-4 border border-green-200">
           <p className="text-xs text-green-700 uppercase font-semibold">Students</p>
           <p className="text-2xl font-bold text-green-900 mt-2">{stats.students}</p>
-        </div>
-        <div className="rounded-lg bg-red-50 p-4 border border-red-200">
-          <p className="text-xs text-red-700 uppercase font-semibold">Admins</p>
-          <p className="text-2xl font-bold text-red-900 mt-2">{stats.admins}</p>
         </div>
         <div className="rounded-lg bg-purple-50 p-4 border border-purple-200">
           <p className="text-xs text-purple-700 uppercase font-semibold">Club Owners</p>
           <p className="text-2xl font-bold text-purple-900 mt-2">{stats.clubowners}</p>
         </div>
+        <div className="rounded-lg bg-red-50 p-4 border border-red-200">
+          <p className="text-xs text-red-700 uppercase font-semibold">College Admins</p>
+          <p className="text-2xl font-bold text-red-900 mt-2">{stats.collegeAdmins}</p>
+        </div>
+        
+        <div className="rounded-lg bg-yellow-100 p-4 border border-yellow-900">
+          <p className="text-xs text-yellow-700 uppercase font-semibold">System Admins</p>
+          <p className="text-2xl font-bold text-yellow-900 mt-2">{stats.systemAdmins}</p>
+        </div>
+        
       </div>
 
       {/* Filter buttons */}
@@ -111,17 +123,7 @@ export default function UserList({ refreshTrigger }) {
           }`}
         >
           Students
-        </button>
-        <button
-          onClick={() => setFilter("admins")}
-          className={`px-4 py-2 rounded-lg text-sm font-semibold transition ${
-            filter === "admins"
-              ? "bg-red-600 text-white"
-              : "bg-[#f0e4d4] text-slate-700 hover:bg-[#e8d4c0]"
-          }`}
-        >
-          Admins
-        </button>
+        </button>        
         <button
           onClick={() => setFilter("clubowners")}
           className={`px-4 py-2 rounded-lg text-sm font-semibold transition ${
@@ -131,6 +133,26 @@ export default function UserList({ refreshTrigger }) {
           }`}
         >
           Club Owners
+        </button>
+        <button
+          onClick={() => setFilter("collegeAdmin")}
+          className={`px-4 py-2 rounded-lg text-sm font-semibold transition ${
+            filter === "collegeAdmin"
+              ? "bg-red-600 text-white"
+              : "bg-[#f0e4d4] text-slate-700 hover:bg-[#e8d4c0]"
+          }`}
+        >
+          College Admins
+        </button>
+        <button
+          onClick={() => setFilter("systemAdmin")}
+          className={`px-4 py-2 rounded-lg text-sm font-semibold transition ${
+            filter === "systemAdmin"
+              ? "bg-yellow-100 text-yellow-900"
+              : "bg-[#f0e4d4] text-slate-700 hover:bg-[#e8d4c0]"
+          }`}
+        >
+          System Admins
         </button>
       </div>
 

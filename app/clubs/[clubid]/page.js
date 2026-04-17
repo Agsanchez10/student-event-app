@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useState, useEffect } from "react";
+import { fetchClub } from "@/app/actions/clubActions";
 
 export default function ClubLandingPage() {
   const params = useParams();
@@ -11,12 +12,11 @@ export default function ClubLandingPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchClub = async () => {
+    const getClub = async () => {
       try {
-        const res = await fetch(`/api/clubs/${clubId}`);
-        if (res.ok) {
-          const data = await res.json();
-          setClub(data);
+        const res = await fetchClub(clubId);
+        if (res.success) {
+          setClub(res.data);
         }
       } catch (error) {
         console.error("Failed to fetch club:", error);
@@ -25,7 +25,7 @@ export default function ClubLandingPage() {
       }
     };
 
-    fetchClub();
+    getClub();
   }, [clubId]);
 
   if (loading) {

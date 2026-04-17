@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { joinClubAction } from "@/app/actions/clubActions";
+import { addMembershipApplication } from "@/app/actions/membershipApplicationActions";
 
 export default function ClubFinderClient({
     clubs,
@@ -28,20 +30,13 @@ export default function ClubFinderClient({
     const handleJoinPublicClub = async (clubId) => {
         setLoadingClubId(clubId);
         try {
-            const response = await fetch(`/api/clubs/${clubId}/join`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ studentId: user._id }),
-            });
+            const response = await joinClubAction(clubId, user._id);
 
-            if (response.ok) {
+            if (response.success) {
                 alert("Successfully joined the club!");
                 window.location.reload();
             } else {
-                const error = await response.json();
-                alert(error.error || "Failed to join club");
+                alert(response.error || "Failed to join club");
             }
         } catch (error) {
             console.error("Error joining club:", error);
@@ -50,10 +45,6 @@ export default function ClubFinderClient({
             setLoadingClubId(null);
         }
     };
-
-
-    
-
 
     // Handle applying for private club
     const handleApplyForClub = (club) => {
@@ -73,22 +64,20 @@ export default function ClubFinderClient({
 
         setLoadingClubId(selectedClub._id);
         try {
-            const response = await fetch(`/api/clubs/${selectedClub._id}/membership-applications`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    message: applicationMessage,
-                }),
-            });
+            const response = await addMembershipApplication(
+                selectedClub._id,
+                user._id,
+                `${user.firstName} ${user.lastName}`,
+                user.email
+            );
 
-            if (response.ok) {
+            if (response.success) {
                 alert("Application submitted successfully! Please wait for club approval.");
                 setShowApplicationForm(false);
                 setApplicationMessage("");
                 window.location.reload();
             } else {
-                const error = await response.json();
-                alert(error.error || "Failed to submit application");
+                alert(response.error || "Failed to submit application");
             }
         } catch (error) {
             console.error("Error submitting application:", error);
