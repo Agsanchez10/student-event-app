@@ -176,12 +176,12 @@ export default function AdminList({ refreshTrigger }) {
                     <td className="px-4 py-3">
                       <span
                         className={`inline-flex px-3 py-1 rounded-full text-xs font-semibold ${
-                          admin.adminType === "SystemAdmin"
+                          admin.role === "SystemAdmin"
                             ? "bg-[#e05c5c]/20 text-[#a33b3b]"
                             : "bg-[#d4b18b]/20 text-[#8a5f3a]"
                         }`}
                       >
-                        {admin.adminType}
+                        {admin.role}
                       </span>
                     </td>
                     <td className="px-4 py-3">
@@ -204,7 +204,7 @@ export default function AdminList({ refreshTrigger }) {
                         >
                           🔑 Reset
                         </button>
-                        {admin.adminType !== "SystemAdmin" && (
+                        {admin.role !== "SystemAdmin" && (
                           <>
                             {admin.isActive ? (
                               <button

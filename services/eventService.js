@@ -22,7 +22,9 @@ export const createEvent = withDB(async (body) => {
     const newId = lastID ? lastID._id + 1 : 1;
 
     const event = await Event.create({ ...body, _id: newId });
-    return event.toObject();
+    const plainEvent = event.toObject();
+    console.log("Created event in DB:", plainEvent);
+    return plainEvent;
 });
 
 export const deleteEvent = withDB(async (eventId) => {    

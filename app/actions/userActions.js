@@ -1,6 +1,6 @@
 "use server";
 
-import { getUsers, getUser, createUser, deleteUser, updateUser, getUserByEmail, createCollegeAdmin, deactivateUser } from "@/services/userService";
+import { getUsers, getUser, createUser, deleteUser, updateUser, getUserByEmail, createCollegeAdmin, deactivateUser, getUsersByIds } from "@/services/userService";
 import { requireAuth, requireAdmin, requireSystemAdmin, getCurrentUser } from "@/lib/authMiddleware";
 
 export async function fetchUsers() {
@@ -21,7 +21,7 @@ export async function fetchUser(userId) {
     const currentUser = await requireAuth();
     
     // Users can only fetch their own info unless they're admin
-    if (Number(currentUser._id) !== Number(userId) && (currentUser.role !== "SystemAdmin" || currentUser.role !== "CollegeAdmin")) {
+    if (Number(currentUser._id) !== Number(userId) && (currentUser.role !== "SystemAdmin" && currentUser.role !== "CollegeAdmin")) {
       throw new Error("Forbidden: You can only access your own information");
     }
     
@@ -29,6 +29,27 @@ export async function fetchUser(userId) {
     return { success: true, data: user };
   } catch (error) {
     console.error("Error fetching user:", error);
+    return { success: false, error: error.message };
+  }
+}
+
+export async function fetchPublicUserInfo(userId) {
+  try {
+    await requireAuth();
+    
+    // Anyone can fetch public user info (name and email for display)
+    const user = await getUser(userId);
+    return { 
+      success: true, 
+      data: {
+        _id: user._id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+      }
+    };
+  } catch (error) {
+    console.error("Error fetching public user info:", error);
     return { success: false, error: error.message };
   }
 }
@@ -104,13 +125,35 @@ export async function createAdminUser(adminData) {
 
 export async function deactivateUserAccount(userId) {
   try {
-    // Only system admin can deactivate users
-    await requireSystemAdmin();
+    // CollegeAdmin and SystemAdmin can deactivate users
+    await requireAdmin();
     
     const result = await deactivateUser(userId);
     return { success: true, data: result };
   } catch (error) {
     console.error("Error deactivating user:", error);
+    return { success: false, error: error.message };
+  }
+}
+
+export async function fetchPublicUserInfoBatch(userIds) {
+  try {
+    await requireAuth();
+    
+    // Fetch all users in a single database call
+    const users = await getUsersByIds(userIds);
+    
+    // Transform to return only public info (name and email for display)
+    const publicUsers = users.map(user => ({
+      _id: user._id,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+    }));
+    
+    return { success: true, data: publicUsers };
+  } catch (error) {
+    console.error("Error fetching public user info batch:", error);
     return { success: false, error: error.message };
   }
 }

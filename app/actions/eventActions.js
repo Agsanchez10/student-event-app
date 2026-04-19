@@ -1,5 +1,6 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
 import { getEvents, getEvent, createEvent, deleteEvent, updateEvent, registerForEvent, unregisterFromEvent, getUserEvents, getPublicEvents } from "@/services/eventService";
 import { requireAuth, getCurrentUser } from "@/lib/authMiddleware";
 
@@ -36,6 +37,10 @@ export async function addEvent(eventData) {
     
     const eventWithCreator = { ...eventData, createdBy: currentUser._id };
     const event = await createEvent(eventWithCreator);
+    
+    // Revalidate club page to show new event
+    revalidatePath(`/dashboard/clubs/${eventData.clubId}`);
+    
     return { success: true, data: event };
   } catch (error) {
     console.error("Error creating event:", error);
@@ -48,12 +53,17 @@ export async function removeEvent(eventId) {
     const currentUser = await requireAuth();
     const event = await getEvent(eventId);
     
-    // Only event creator or admin can delete
-    if (Number(event.createdBy) !== Number(currentUser._id) && currentUser.role !== "Admin") {
+    // Only event creator, CollegeAdmin, or SystemAdmin can delete
+    const isAdmin = currentUser.role === "CollegeAdmin" || currentUser.role === "SystemAdmin";
+    if (Number(event.createdBy) !== Number(currentUser._id) && !isAdmin) {
       throw new Error("Forbidden: Only event creator or admin can delete this event");
     }
     
     const result = await deleteEvent(eventId);
+    
+    // Revalidate club page to reflect deleted event
+    revalidatePath(`/dashboard/clubs/${event.clubId}`);
+    
     return { success: true, data: result };
   } catch (error) {
     console.error("Error deleting event:", error);
@@ -62,17 +72,22 @@ export async function removeEvent(eventId) {
 }
 
 
-export async function modifyEvent(eventId, eventData) {
+export async function modifyEvent(eventId, clubId, eventData) {
   try {
     const currentUser = await requireAuth();
     const event = await getEvent(eventId);
     
-    // Only event creator or admin can update
-    if (Number(event.createdBy) !== Number(currentUser._id) && currentUser.role !== "Admin") {
+    // Only event creator, CollegeAdmin, or SystemAdmin can update
+    const isAdmin = currentUser.role === "CollegeAdmin" || currentUser.role === "SystemAdmin";
+    if (Number(event.createdBy) !== Number(currentUser._id) && !isAdmin) {
       throw new Error("Forbidden: Only event creator or admin can update this event");
     }
     
     const result = await updateEvent(eventId, eventData);
+    
+    // Revalidate club page to reflect updated event
+    revalidatePath(`/dashboard/clubs/${clubId}`);
+    
     return { success: true, data: result };
   } catch (error) {
     console.error("Error updating event:", error);
@@ -98,16 +113,11 @@ export async function registerForEventAction(eventId, userId) {
   }
 }
 
-export async function unregisterFromEventAction(eventId, userId) {
+export async function unregisterFromEventAction(eventId) {
   try {
     const currentUser = await requireAuth();
     
-    // User can only unregister with their own ID
-    if (Number(currentUser._id) !== Number(userId)) {
-      throw new Error("Forbidden: You can only unregister with your own account");
-    }
-    
-    const result = await unregisterFromEvent(eventId, userId);
+    const result = await unregisterFromEvent(eventId, currentUser._id);
     return { success: true, data: result };
   } catch (error) {
     console.error("Error unregistering from event:", error);

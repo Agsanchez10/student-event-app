@@ -20,7 +20,8 @@ const getCurrentUser = withDB(async (token) => {
 export default async function ClubCharterPage() {
     const cookieStore = await cookies();
     const token = cookieStore.get("token")?.value;
-    const user = await getCurrentUser(token);
+    const rawUser = await getCurrentUser(token);
+    const user = rawUser ? JSON.parse(JSON.stringify(rawUser)) : null;
 
     if(!user) {        
         redirect("/login");

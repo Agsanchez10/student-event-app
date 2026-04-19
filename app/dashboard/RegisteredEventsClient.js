@@ -27,8 +27,12 @@ const formatTime = (value) => {
 export default function RegisteredEventsClient({ registeredEvents, eventPage, clubPage, currentUser }) {
     const [selectedEvent, setSelectedEvent] = useState(null);
     const [unregisteringEvent, setUnregisteringEvent] = useState(null);
+
+    const now = new Date();
+    const futureEvents = registeredEvents.filter(e => e.date && new Date(e.date) > now);
+
     const eventPageStart = (eventPage - 1) * ITEMS_PER_PAGE;
-    const studentEventPages = Math.max(1, Math.ceil(registeredEvents.length / ITEMS_PER_PAGE));
+    const studentEventPages = Math.max(1, Math.ceil(futureEvents.length / ITEMS_PER_PAGE));
 
     const router = useRouter();
 
@@ -41,7 +45,7 @@ export default function RegisteredEventsClient({ registeredEvents, eventPage, cl
         setUnregisteringEvent(event._id);
 
         try {
-            const response = await unregisterFromEventAction(event._id, currentUser._id);
+            const response = await unregisterFromEventAction(event._id);
             if (response.success) {
                 router.refresh();
             } else {
@@ -61,50 +65,47 @@ export default function RegisteredEventsClient({ registeredEvents, eventPage, cl
                             <div className="flex items-center justify-between gap-4">
                                 <div>
                                     <h2 className="text-2xl font-semibold text-slate-950">Registered events</h2>
-                                    <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">Showing {Math.min(ITEMS_PER_PAGE, registeredEvents.length)} of {registeredEvents.length} events you are registered for:</p>
+                                    <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">Showing {Math.min(ITEMS_PER_PAGE, futureEvents.length)} of {futureEvents.length} upcoming events you are registered for:</p>
                                 </div>
                                 <Link href="/dashboard/registeredEvents" className="rounded-full bg-slate-950 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-950 dark:hover:bg-slate-200">View all registered events</Link>
                             </div>
                             
-                            {registeredEvents.length === 0 ? (
-                                <div className="mt-6 rounded-3xl border border-slate-200 bg-slate-50 p-6 text-slate-600 dark:border-slate-800 dark:bg-slate-950 dark:text-slate-300">You are not registered for any events yet.</div>
+                            {futureEvents.length === 0 ? (
+                                <div className="mt-6 rounded-3xl border border-slate-200 bg-slate-50 p-6 text-slate-600 dark:border-slate-800 dark:bg-slate-950 dark:text-slate-300">You have no upcoming registered events.</div>
                             ) : (
                                 <>
                                     <div className="mt-6 space-y-4">
-                                        {registeredEvents.slice(eventPageStart, eventPageStart + ITEMS_PER_PAGE).map((event) => (
+                                        {futureEvents.slice(eventPageStart, eventPageStart + ITEMS_PER_PAGE).map((event) => (
                                             <div key={event._id} className="rounded-[1.8rem] border border-[#d4b18b]/40 bg-[#fff5e4] p-6 shadow-md shadow-[#b9955d]/10">
-                                                <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-                                                    <div>
-                                                    <h3 className="text-lg font-semibold text-slate-950 dark:text-white">{event.name || "Untitled Event"}</h3>
-                                                    <p>
-                                                        {event.location ? (<>
-                                                           📍 Location: {event.location}
-                                                        </>) : "Location TBD"}
-                                                    </p>
+                                                <div className="flex items-start justify-between gap-4">
+                                                    <div className="flex-1">
+                                                        <h3 className="text-lg font-semibold text-slate-950">{event.name || "Untitled Event"}</h3>
+                                                        <p className="mt-1 text-sm text-slate-600">
+                                                            {event.location ? <>📍 {event.location}</> : "Location TBD"}
+                                                        </p>
+                                                        <p className="mt-2 text-sm text-slate-600">{event.description || "No description provided."}</p>
+                                                        <div className="mt-3 flex flex-wrap gap-3 text-sm text-slate-500">
+                                                            <span>📅 {formatDate(event.date)}</span>
+                                                            <span>🕒 {formatTime(event.date)}</span>
+                                                        </div>
                                                     </div>
-                                                    <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">{event.description || "No description provided."}</p>
-                                                <div className="mt-3 flex flex-wrap gap-3 text-sm text-slate-500 dark:text-slate-400">
-                                                
-                                                    
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => setSelectedEvent(event)}
-                                                        className="inline-flex items-center justify-center rounded-full bg-[#e05c5c] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#c94a4a]"                                      >
-                                                        View details
-                                                    </button>
-
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => handleUnregister(event)}
-                                                        className="inline-flex items-center justify-center rounded-full bg-gray-300 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-gray-500"                                      >
-                                                        Unregister
-                                                    </button>
+                                                    <div className="flex shrink-0 items-center gap-2">
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => setSelectedEvent(event)}
+                                                            className="inline-flex items-center justify-center rounded-full bg-[#e05c5c] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#c94a4a]"
+                                                        >
+                                                            View details
+                                                        </button>
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => handleUnregister(event)}
+                                                            disabled={unregisteringEvent === event._id}
+                                                            className="inline-flex items-center justify-center rounded-full bg-gray-300 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-gray-400 disabled:cursor-not-allowed disabled:opacity-60"
+                                                        >
+                                                            {unregisteringEvent === event._id ? "Unregistering..." : "Unregister"}
+                                                        </button>
                                                     </div>
-                                                    
-                                                </div>
-                                                <div className="mt-3 flex flex-wrap gap-3 text-sm text-slate-500 dark:text-slate-400">
-                                                    <span>📅 {formatDate(event.date)}</span>
-                                                    <span>🕒 {formatTime(event.date)}</span>
                                                 </div>
                                             </div>
                                         ))}

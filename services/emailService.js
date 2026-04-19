@@ -1,27 +1,31 @@
 import { Resend } from "resend";
-import { NextResponse } from "next/server";
-
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-export async function POST(request) {
+/**
+ * Send an email using the Resend service
+ * @param {Object} options - Email options
+ * @param {string} options.to - Recipient email
+ * @param {string} options.subject - Email subject
+ * @param {string} options.html - HTML content
+ * @returns {Promise<Object>} - Response from Resend API
+ */
+export async function sendEmail({ to, subject, html }) {
     try {
-        const { email, subject, message } = await request.json();
-
         const { data, error } = await resend.emails.send({
-            from: 'onboarding@resend.dev',
-            to: ['bullepin.notification@gmail.com'],
+            from: 'donotreply@bullepin.xyz',
+            to: to,
             subject: subject,
-            html: `<p>${message}</p><p>Reply to: ${email}</p>`,
+            html: html,
         });
 
         if (error) {
-            return NextResponse.json({ error }, { status: 500 });
+            throw new Error(error.message);
         }
 
-        return NextResponse.json({ data });
+        return { success: true, data };
     } catch (error) {
-        return NextResponse.json({ error }, { status: 500 });
+        console.error("Email send error:", error);
+        throw error;
     }
-
 }

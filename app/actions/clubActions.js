@@ -49,8 +49,8 @@ export async function removeClub(clubId) {
     const currentUser = await requireAuth();
     const club = await getClub(clubId);
     
-    // Only club owner or admin can delete club
-    if (Number(club.ownedBy) !== Number(currentUser._id) && currentUser.role !== "Admin") {
+    // Only club owner or CollegeAdmin can delete club
+    if (Number(club.ownedBy) !== Number(currentUser._id) && currentUser.role !== "CollegeAdmin") {
       throw new Error("Forbidden: Only club owner or admin can delete this club");
     }
     
@@ -67,8 +67,8 @@ export async function modifyClub(clubId, clubData) {
     const currentUser = await requireAuth();
     const club = await getClub(clubId);
     
-    // Only club owner or admin can update club
-    if (Number(club.ownedBy) !== Number(currentUser._id) && currentUser.role !== "Admin") {
+    // Only club owner or CollegeAdmin can update club
+    if (Number(club.ownedBy) !== Number(currentUser._id) && currentUser.role !== "CollegeAdmin") {
       throw new Error("Forbidden: Only club owner or admin can update this club");
     }
     

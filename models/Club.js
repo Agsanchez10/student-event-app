@@ -7,7 +7,7 @@ const ClubSchema = new mongoose.Schema({
     eventList: [{ type: Number }],
     memberList: [{ type: Number }],   
     ownerID: { type: Number },
-    admin: { type: Number },
+    admin: [{ type: Number }],
     announcements: [{ type: Number }],
     isPrivate: { type: Boolean, default: false },
     membershipApplications: [{ type: Number }],

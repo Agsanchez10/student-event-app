@@ -2,8 +2,9 @@
 
 import { useState, useMemo } from "react";
 import { useEffect } from "react";
+import Link from "next/link";
 import { signCharterAction, removeSignatureAction, removeCharterAction, fetchUserCharters } from "@/app/actions/clubCharterActions";
-import { fetchUser } from "@/app/actions/userActions";
+import { fetchPublicUserInfoBatch } from "@/app/actions/userActions";
 
 const formatDate = (value) => {
     if (!value) return "TBD";
@@ -42,18 +43,21 @@ export default function PendingChartersClient({ charters = [], currentUser }) {
     
 
     useEffect(() => {
-        if (selectedCharter) {
-            getOwnerName(selectedCharter.initiatorId).then(name => {
-                setOwnerNameCache(prevCache => ({
-                    ...prevCache,
-                    [selectedCharter.initiatorId]: name
-                }));
-
+        if (charters.length === 0) return;
+        const initiatorIds = [...new Set(charters.map(c => c.initiatorId))];
+        fetchPublicUserInfoBatch(initiatorIds).then(result => {
+            if (result.success) {
+                const newCache = {};
+                result.data.forEach(user => {
+                    const name = `${user.firstName} ${user.lastName}`.trim() || user.email || "Unknown";
+                    newCache[user._id] = name;
+                });
+                setOwnerNameCache(newCache);
             }
-            );
-            console.log(`Fetched owner name for user ID ${selectedCharter.initiatorId}: ${ownerNameCache[selectedCharter.initiatorId]}`);
-        }
-    }, [selectedCharter]);
+        }).catch(error => {
+            console.error("Error fetching charter owner names:", error);
+        });
+    }, [charters]);
 
 
     const sortedCharters = useMemo(() => {
@@ -144,23 +148,6 @@ export default function PendingChartersClient({ charters = [], currentUser }) {
         }
     };
 
-    const getOwnerName = async (initiatorId) => {
-        try {
-            const result = await fetchUser(initiatorId);
-            if (result.success) {
-                const user = result.data;
-                const name = user.firstName + " " + user.lastName;
-                console.log(`Fetched owner name for user ID ${initiatorId}: ${name}`);
-                return name || "TBD";
-            } else {
-                throw new Error('Failed to fetch owner name');
-            }
-        } catch (error) {
-            console.error('An error occurred while fetching the owner name', error);
-            return "TBD";
-        }
-    }
-
     const totalPages = Math.max(1, Math.ceil(sortedCharters.length / ITEMS_PER_PAGE));
     const displayedCharters = sortedCharters.slice(
         (currentPage - 1) * ITEMS_PER_PAGE,
@@ -170,9 +157,19 @@ export default function PendingChartersClient({ charters = [], currentUser }) {
     return (
         <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,_rgba(249,243,229,0.6),_transparent_30%),radial-gradient(circle_at_bottom_right,_rgba(224,92,92,0.14),_transparent_20%),linear-gradient(180deg,_#f6f0e0_0%,_#e8d7bb_100%)] py-10 text-slate-900">
             <main className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
+                <div className="mb-8 flex items-center justify-between">
+                    <div>
+                        <h1 className="text-3xl font-semibold text-slate-950">Pending Club Charters</h1>
+                        <p className="mt-2 text-sm text-slate-600">Review charters that are still being collected, drafted, or submitted for approval.</p>
+                    </div>
+                    <Link
+                        href="/dashboard"
+                        className="inline-flex items-center justify-center rounded-3xl border border-[#d4b18b] bg-[#fff5e4] px-6 py-3 text-sm font-semibold text-slate-900 transition hover:border-[#c1a06e] hover:bg-[#f8e7ce] whitespace-nowrap"
+                    >
+                        ← Back to dashboard
+                    </Link>
+                </div>
                 <div className="mb-8 rounded-3xl border border-[#d4b18b]/40 bg-[#fff5e4] p-8 shadow-sm ring-1 ring-[#d4b18b]/20">
-                    <h1 className="text-3xl font-semibold text-slate-950">Pending Club Charters</h1>
-                    <p className="mt-3 text-sm text-[#a33b3b]">Review charters that are still being collected, drafted, or submitted for approval.</p>
                     
                     <div className="mt-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                         <div className="flex-1">

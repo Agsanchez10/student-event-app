@@ -100,8 +100,8 @@ export default function CreateAdminForm({ onSuccess }) {
           required
         />
         <select
-          name="adminType"
-          value={formData.adminType}
+          name="role"
+          value={formData.role}
           onChange={handleChange}
           className="rounded-lg border border-[#d4b18b] bg-white px-4 py-3 text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#e05c5c] sm:col-span-2"
         >

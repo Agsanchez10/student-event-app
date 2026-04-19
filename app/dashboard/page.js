@@ -140,6 +140,7 @@ export default async function Dashboard({ searchParams }) {
                     </div>
 
                     {/* Quick Actions Card */}
+                    {role !== "ClubOwner" ? (
                     <div className="relative rounded-[2rem] border border-[#d4b18b]/40 bg-[#f9f2e4] p-8 shadow-[0_25px_65px_-30px_rgba(15,23,42,0.75)]">
                         <p className="text-sm uppercase tracking-[0.24em] font-semibold text-[#a33b3b]">Quick Actions</p>
                         <div className="mt-6 flex flex-col gap-3">
@@ -156,7 +157,7 @@ export default async function Dashboard({ searchParams }) {
                                     </Link>
                                 </>
                             ) : null}
-                            {role === "Admin" ? (
+                            {role === "CollegeAdmin" ? (
                                 <>
                                     <Link href="/dashboard/admin/flagged-content" className="rounded-full bg-[#e05c5c] px-6 py-3 text-sm font-semibold text-white transition hover:bg-[#c94a4a]">
                                         Flagged Content
@@ -169,11 +170,10 @@ export default async function Dashboard({ searchParams }) {
                                     </Link>
                                 </>
                             ) : null}
-                            {role === "ClubOwner" ? (
-                                <p> *********************************************<br/> POSSIBLY REMOVE THIS <br/> *********************************************</p>
-                            ) : null}
+                                                       
                         </div>
                     </div>
+                    ) : null}
                 </div>
 
                 {/* Student Section */}
@@ -191,7 +191,7 @@ export default async function Dashboard({ searchParams }) {
                     />
                 ) : null}
 
-                {role === "Admin" && adminType === "CollegeAdmin" ? (
+                {role === "CollegeAdmin"  ? (
                     <div className="relative rounded-[2rem] border border-[#d4b18b]/40 bg-[#f9f2e4] p-8 shadow-[0_25px_65px_-30px_rgba(15,23,42,0.75)]">
                         <h2 className="text-2xl font-semibold text-slate-950">Admin Dashboard</h2>
                         <p className="mt-2 text-slate-700">Quick access to the tools you need to moderate clubs, review flagged content, and approve new charters.</p>

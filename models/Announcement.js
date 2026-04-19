@@ -6,6 +6,7 @@ const AnnouncementSchema = new mongoose.Schema({
     title: String,
     description: String,
     clubID: { type: Number },
+    eventId: { type: Number, default: null },
     createdAt: {
         type: Date,
         default: Date.now,
