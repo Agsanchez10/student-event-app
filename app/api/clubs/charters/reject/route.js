@@ -1,6 +1,6 @@
 import { cookies } from "next/headers";
 import jwt from "jsonwebtoken";
-import { connectDB } from "@/lib/mongodb";
+//import { connectDB } from "@/lib/mongodb";
 import ClubCharter from "@/models/ClubCharter";
 import User, { CollegeAdmin } from "@/models/User";
 
