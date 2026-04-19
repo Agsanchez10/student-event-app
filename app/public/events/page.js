@@ -42,9 +42,9 @@ export default async function PublicEventsPage({ searchParams }) {
                 <section className="mb-10 rounded-3xl bg-white p-8 shadow-lg ring-1 ring-slate-200 dark:bg-slate-900 dark:ring-slate-700">
                     <div className="flex items-center justify-between">
                         <div>
-                            <h1 className="text-4xl font-bold text-slate-950 dark:text-white">Campus Events</h1>
+                            <h1 className="text-4xl font-bold text-slate-950 dark:text-white">Public Campus Events</h1>
                             <p className="mt-3 text-lg text-slate-600 dark:text-slate-300">
-                                Discover and join upcoming campus events
+                                Browse Public Events happening around campus. Sign in to register and see more details!
                             </p>
                         </div>
                         <Link

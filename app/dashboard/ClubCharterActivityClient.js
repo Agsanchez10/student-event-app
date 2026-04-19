@@ -47,34 +47,34 @@ export default function ClubCharterActivityClient({ charters, currentPage, items
         <div className="relative rounded-[2rem] border border-[#d4b18b]/40 bg-[#f9f2e4] p-8 shadow-[0_25px_65px_-30px_rgba(15,23,42,0.75)]">
             <div>
                 <h2 className="text-2xl font-semibold text-slate-950">Club charter activity</h2>
-                <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">Track charters you started or signed and manage ones you own.</p>
+                <p className="mt-2 text-sm text-slate-500">Track charters you started or signed and manage ones you own.</p>
             </div>
 
             <div className="mt-6 space-y-5">
                 {initiatedCharters.length > 0 ? (
                     <div>
-                        <h3 className="text-base font-semibold text-slate-900 dark:text-white">Charters you initiated</h3>
+                        <h3 className="text-base font-semibold text-slate-900">Charters you initiated</h3>
                         <div className="mt-4 space-y-4">
                             {initiatedCharters.map((charter) => (
-                                <div key={charter._id} className="rounded-3xl border border-slate-200 bg-slate-50 p-4 dark:border-slate-800 dark:bg-slate-950">
+                                <div key={charter._id} className="rounded-[1.8rem] border border-[#d4b18b]/40 bg-[#fff5e4] p-6 shadow-md shadow-[#b9955d]/10">
                                     <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                                         <div>
-                                            <h4 className="text-lg font-semibold text-slate-950 dark:text-white">{charter.name}</h4>
-                                            <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">{charter.description || "No description provided."}</p>
+                                            <h4 className="text-lg font-semibold text-slate-950">{charter.name}</h4>
+                                            <p className="mt-2 text-sm text-slate-600">{charter.description || "No description provided."}</p>
                                         </div>
                                         <div className="flex flex-col items-start gap-3 sm:items-end">
-                                            <span className="rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-300">{charter.status === "submitted" ? "Submitted" : "Collecting"}</span>
+                                            <span className="rounded-full bg-[#e05c5c]/15 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-[#a33b3b]">{charter.status === "submitted" ? "Submitted" : "Collecting"}</span>
                                             <button
                                                 type="button"
                                                 disabled={isDeletingId === charter._id}
                                                 onClick={() => handleDelete(charter._id)}
-                                                className="rounded-full bg-rose-500 px-4 py-2 text-xs font-semibold text-white transition hover:bg-rose-400 disabled:cursor-not-allowed disabled:opacity-60"
+                                                className="rounded-full bg-[#e05c5c] px-4 py-2 text-xs font-semibold text-white transition hover:bg-[#c94a4a] disabled:cursor-not-allowed disabled:opacity-60"
                                             >
                                                 {isDeletingId === charter._id ? "Cancelling..." : "Cancel charter"}
                                             </button>
                                         </div>
                                     </div>
-                                    <div className="mt-3 flex flex-wrap gap-3 text-sm text-slate-500 dark:text-slate-400">
+                                    <div className="mt-3 flex flex-wrap gap-3 text-sm text-slate-500">
                                         <span>Signatures: {charter.signatures?.length ?? 0}/10</span>
                                         <span>Created: {new Date(charter.createdAt).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}</span>
                                     </div>
@@ -86,18 +86,18 @@ export default function ClubCharterActivityClient({ charters, currentPage, items
 
                 {signedCharters.length > 0 ? (
                     <div>
-                        <h3 className="text-base font-semibold text-slate-900 dark:text-white">Charters you signed</h3>
+                        <h3 className="text-base font-semibold text-slate-900">Charters you signed</h3>
                         <div className="mt-4 space-y-4">
                             {signedCharters.map((charter) => (
-                                <div key={charter._id} className="rounded-3xl border border-slate-200 bg-slate-50 p-4 dark:border-slate-800 dark:bg-slate-950">
+                                <div key={charter._id} className="rounded-[1.8rem] border border-[#d4b18b]/40 bg-[#fff5e4] p-6 shadow-md shadow-[#b9955d]/10">
                                     <div className="flex items-start justify-between gap-4">
                                         <div>
-                                            <h4 className="text-lg font-semibold text-slate-950 dark:text-white">{charter.name}</h4>
-                                            <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">{charter.description || "No description provided."}</p>
+                                            <h4 className="text-lg font-semibold text-slate-950">{charter.name}</h4>
+                                            <p className="mt-2 text-sm text-slate-600">{charter.description || "No description provided."}</p>
                                         </div>
-                                        <span className="rounded-full bg-sky-100 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-sky-800 dark:bg-sky-900/40 dark:text-sky-300">{charter.status === "submitted" ? "Submitted" : "Collecting"}</span>
+                                        <span className="rounded-full bg-[#d4b18b]/30 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-[#8a5f3a]">{charter.status === "submitted" ? "Submitted" : "Collecting"}</span>
                                     </div>
-                                    <div className="mt-3 flex flex-wrap gap-3 text-sm text-slate-500 dark:text-slate-400">
+                                    <div className="mt-3 flex flex-wrap gap-3 text-sm text-slate-500">
                                         <span>Signatures: {charter.signatures?.length ?? 0}/10</span>
                                         <span>Created: {new Date(charter.createdAt).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}</span>
                                     </div>
@@ -109,11 +109,11 @@ export default function ClubCharterActivityClient({ charters, currentPage, items
             </div>
 
             {totalPages > 1 ? (
-                <div className="mt-6 flex items-center justify-between rounded-3xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-600 dark:border-slate-800 dark:bg-slate-950 dark:text-slate-300">
+                <div className="mt-6 flex items-center justify-between rounded-[1.8rem] border border-[#d4b18b]/40 bg-[#fff5e4] p-4 text-sm text-slate-700">
                     <span>Page {currentPage} of {totalPages}</span>
                     <div className="inline-flex items-center gap-3">
-                        <button disabled className="rounded-full bg-slate-200 px-4 py-2 text-slate-400" type="button">Previous</button>
-                        <button disabled className="rounded-full bg-slate-200 px-4 py-2 text-slate-400" type="button">Next</button>
+                        <button disabled className="rounded-full bg-slate-200 px-4 py-2 text-slate-400 cursor-not-allowed" type="button">Previous</button>
+                        <button disabled className="rounded-full bg-slate-200 px-4 py-2 text-slate-400 cursor-not-allowed" type="button">Next</button>
                     </div>
                 </div>
             ) : null}

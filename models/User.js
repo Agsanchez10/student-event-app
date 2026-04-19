@@ -19,6 +19,7 @@ const UserSchema = new mongoose.Schema(
         otp: { type: String, default: null },
         otpExpiry: { type: Date, default: null },
         requiresOTP: { type: Boolean, default: false },
+        isActive: { type: Boolean, default: true },
     }, baseOptions
 );
 
@@ -46,7 +47,6 @@ export const CollegeAdmin = mongoose.models.CollegeAdmin ??
     User.discriminator(
         "CollegeAdmin", 
         new mongoose.Schema({            
-            isActive: { type: Boolean, default: true },
             pastActions: [{ type: String }]
         })
     );
@@ -56,7 +56,6 @@ export const SystemAdmin = mongoose.models.SystemAdmin ??
     User.discriminator(
         "SystemAdmin",
         new mongoose.Schema({
-            isActive: { type: Boolean, default: true },
             pastActions: [{ type: String }]
         })
     );  

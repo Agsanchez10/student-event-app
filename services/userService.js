@@ -1,5 +1,5 @@
 import { withDB} from "@/lib/mongodb";
-import User from "@/models/User";
+import User, { CollegeAdmin, SystemAdmin } from "@/models/User";
 import crypto from "crypto";
 import bcrypt from "bcryptjs";
 
@@ -87,40 +87,66 @@ export const createCollegeAdmin = withDB(async (body) => {
     return user.toObject();
 });
 
+export const getUsersByIds = withDB(async (userIds) => {
+    const numericIds = userIds.map(id => Number(id));
+    const users = await User.find({ _id: { $in: numericIds } }).lean();
+    return users;
+});
+
 export const deactivateUser = withDB(async (userId) => {
-    const user = await User.findOneAndUpdate(
+    // First, fetch the user to verify they exist and have the right role
+    const user = await User.findOne({ _id: Number(userId) }).lean();
+    
+    if (!user) {
+        throw new Error("404: User not found");
+    }
+    
+    if (!user.role || !["CollegeAdmin", "SystemAdmin"].includes(user.role)) {
+        throw new Error("Only admin accounts can be deactivated");
+    }
+    
+    
+    
+    // Use the appropriate discriminator model based on role
+    const Model = user.role === "CollegeAdmin" ? CollegeAdmin : SystemAdmin;
+    
+    const updatedUser = await Model.findOneAndUpdate(
         { _id: Number(userId) },
         { isActive: false },
         { returnDocument: "after" }
     ).lean();
     
+    
+    
+    return updatedUser;
+});
+
+export const activateUser = withDB(async (userId) => {
+    // First, fetch the user to verify they exist and have the right role
+    const user = await User.findOne({ _id: Number(userId) }).lean();
+    
     if (!user) {
         throw new Error("404: User not found");
     }
     
-    if (user.role !== "Admin") {
-        throw new Error("Only admin accounts can be deactivated");
+    if (!user.role || !["CollegeAdmin", "SystemAdmin"].includes(user.role)) {
+        throw new Error("Only admin accounts can be activated");
     }
     
-    return user;
-});
-
-export const activateUser = withDB(async (userId) => {
-    const user = await User.findOneAndUpdate(
+    
+    
+    // Use the appropriate discriminator model based on role
+    const Model = user.role === "CollegeAdmin" ? CollegeAdmin : SystemAdmin;
+    
+    const updatedUser = await Model.findOneAndUpdate(
         { _id: Number(userId) },
         { isActive: true },
         { returnDocument: "after" }
     ).lean();
     
-    if (!user) {
-        throw new Error("404: User not found");
-    }
     
-    if (user.role !== "Admin") {
-        throw new Error("Only admin accounts can be activated");
-    }
     
-    return user;
+    return updatedUser;
 });
 
 // Generate a random 6-digit OTP
@@ -208,7 +234,7 @@ export const resetPasswordWithOTP = withDB(async (userId, otp, newPassword) => {
 
 // Get all admins (for SystemAdmin dashboard)
 export const getAllAdmins = withDB(async () => {
-    const admins = await User.find({ role: "Admin" });
+    const admins = await User.find({ role: { $in: ["CollegeAdmin", "SystemAdmin"] } });
     return admins;
 });
 

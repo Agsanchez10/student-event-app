@@ -2,7 +2,8 @@ import { withDB } from "@/lib/mongodb";
 import Club from "@/models/Club";
 import Event from "@/models/Event";
 import Announcement from "@/models/Announcement";
-import User from "@/models/User";
+import User, { Student } from "@/models/User";
+import mongoose from "mongoose";
 
 
 // return all clubs
@@ -57,32 +58,33 @@ export const updateClub = withDB(async (clubid, body) => {
 // add a student to a club's member list
 export const joinClub = withDB(async (clubid, studentId) => {
     const club = await Club.findOneAndUpdate(
-        { 
+        {
             _id: Number(clubid),
             memberList: { $ne: Number(studentId) }
         },
         { $push: { memberList: Number(studentId) } },
-        { returnDocument: "after" }
+        { returnDocument: "after"}
     ).lean();
-    
+
     if (!club) {
-        const existingClub = await Club.findOne({ _id: Number(clubid) }).lean();
+        const existingClub = await Club.findOne({ _id: Number(clubid) }, null, { session }).lean();
         if (!existingClub) {
             throw new Error("404: Club not found");
         }
         if (existingClub.memberList.includes(Number(studentId))) {
+            await session.abortTransaction();
             return { error: "User is already a member of this club" };
         }
         throw new Error("Failed to join club");
     }
-    
-    // Also update user's club memberships
-    await User.findOneAndUpdate(
+
+    // Also update student's club memberships
+    await Student.findOneAndUpdate(
         { _id: Number(studentId) },
         { $push: { clubMemberships: Number(club._id) } },
-        { returnDocument: "after" }
+        { returnDocument: "after"}
     );
-    
+
     return club;
 });
 
@@ -108,8 +110,8 @@ export const leaveClub = withDB(async (clubid, studentId) => {
         throw new Error("Failed to leave club");
     }
     
-    // Also update user's club memberships
-    await User.findOneAndUpdate(
+    // Also update student's club memberships
+    await Student.findOneAndUpdate(
         { _id: Number(studentId) },
         { $pull: { clubMemberships: Number(club._id) } },
         { returnDocument: "after" }

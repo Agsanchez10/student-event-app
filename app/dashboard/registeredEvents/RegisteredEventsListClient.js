@@ -40,10 +40,18 @@ export default function RegisteredEventsListClient({ registeredEvents, currentUs
     const [unregisteringEvent, setUnregisteringEvent] = useState(null);
     const [selectedEvent, setSelectedEvent] = useState(null);
     const [page, setPage] = useState(1);
+    const [showPast, setShowPast] = useState(false);
     const router = useRouter();
 
+    const now = new Date();
+
+    // Split into future and past
+    const futureEvents = registeredEvents.filter(e => e.date && new Date(e.date) > now);
+    const pastEvents = registeredEvents.filter(e => !e.date || new Date(e.date) <= now);
+    const baseEvents = showPast ? registeredEvents : futureEvents;
+
     // Filter events
-    const filteredEvents = registeredEvents.filter((event) => {
+    const filteredEvents = baseEvents.filter((event) => {
         const matchesSearch =
             event.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
             event.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -81,7 +89,7 @@ export default function RegisteredEventsListClient({ registeredEvents, currentUs
         setUnregisteringEvent(event._id);
 
         try {
-            const result = await unregisterFromEventAction(event._id, currentUser._id);
+            const result = await unregisterFromEventAction(event._id);
             if (result.success) {
                 router.refresh();
                 setSelectedEvent(null);
@@ -179,6 +187,24 @@ export default function RegisteredEventsListClient({ registeredEvents, currentUs
                                     </button>
                                 )}
                             </div>
+
+                            {/* Past Events Toggle */}
+                            <div className="flex items-center justify-between border-t border-[#d4b18b]/40 pt-4">
+                                <span className="text-sm text-slate-600">
+                                    {showPast
+                                        ? `Showing all ${registeredEvents.length} events (${pastEvents.length} past)`
+                                        : `Showing ${futureEvents.length} upcoming event${futureEvents.length !== 1 ? "s" : ""}${pastEvents.length > 0 ? ` · ${pastEvents.length} past hidden` : ""}`
+                                    }
+                                </span>
+                                {pastEvents.length > 0 && (
+                                    <button
+                                        onClick={() => { setShowPast(!showPast); setPage(1); }}
+                                        className="rounded-full border border-[#d4b18b] bg-[#fff5e4] px-4 py-2 text-sm font-semibold text-slate-900 transition hover:border-[#c1a06e] hover:bg-[#f8e7ce]"
+                                    >
+                                        {showPast ? "Hide Past Events" : "Show Past Events"}
+                                    </button>
+                                )}
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -196,20 +222,46 @@ export default function RegisteredEventsListClient({ registeredEvents, currentUs
                     </div>
                 ) : filteredEvents.length === 0 ? (
                     <div className="rounded-[1.8rem] border border-[#d4b18b]/40 bg-[#fff5e4] p-8 text-center text-slate-700">
-                        <p className="text-lg">No events match your search criteria.</p>
+                        <p className="text-lg">{searchTerm || dateFilter ? "No events match your search criteria." : "No upcoming registered events."}</p>
                     </div>
                 ) : (
                     <>
                         {/* Events List */}
                         <div className="space-y-4">
-                            {paginatedEvents.map((event) => (
+                            {paginatedEvents.map((event) => {
+                                const isPast = event.date && new Date(event.date) <= now;
+                                return (
                                 <div
                                     key={event._id}
-                                    className="rounded-[1.8rem] border border-[#d4b18b]/40 bg-[#fff5e4] p-6 shadow-md shadow-[#b9955d]/10"
+                                    className={`rounded-[1.8rem] border bg-[#fff5e4] p-6 shadow-md shadow-[#b9955d]/10 ${
+                                        isPast ? "border-slate-400/50 opacity-80" : "border-[#d4b18b]/40"
+                                    }`}
                                 >
+                                    {isPast && (
+                                        <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-slate-200 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-slate-600">
+                                            ⏰ Past Event
+                                        </div>
+                                    )}
                                     <div className="flex flex-col gap-4">
                                         <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
                                             <div className="flex-1">
+                                                <div className="flex flex-wrap gap-2 mb-2">
+                                                    {event.category && (
+                                                        <span className="inline-flex items-center rounded-full bg-[#e05c5c]/15 px-3 py-0.5 text-xs font-semibold capitalize text-[#a33b3b]">
+                                                            {event.category}
+                                                        </span>
+                                                    )}
+                                                    <span className={`inline-flex items-center rounded-full px-3 py-0.5 text-xs font-semibold ${
+                                                        event.isFree !== false ? "bg-green-100 text-green-700" : "bg-amber-100 text-amber-700"
+                                                    }`}>
+                                                        {event.isFree !== false ? "Free" : `$${Number(event.price).toFixed(2)}`}
+                                                    </span>
+                                                    <span className={`inline-flex items-center rounded-full px-3 py-0.5 text-xs font-semibold ${
+                                                        event.visibility === "private" ? "bg-slate-200 text-slate-600" : "bg-blue-100 text-blue-700"
+                                                    }`}>
+                                                        {event.visibility === "private" ? "🔒 Private" : "🌐 Public"}
+                                                    </span>
+                                                </div>
                                                 <h3 className="text-xl font-semibold text-slate-950">
                                                     {event.name || "Untitled Event"}
                                                 </h3>
@@ -229,9 +281,13 @@ export default function RegisteredEventsListClient({ registeredEvents, currentUs
                                                 <p className="text-xs uppercase tracking-wide font-semibold text-[#8a5f3a]">Time</p>
                                                 <p className="mt-1">{formatTime(event.date)}</p>
                                             </div>
-                                            <div className="col-span-2 sm:col-span-2">
+                                            <div>
                                                 <p className="text-xs uppercase tracking-wide font-semibold text-[#8a5f3a]">Location</p>
                                                 <p className="mt-1">{event.location || "TBD"}</p>
+                                            </div>
+                                            <div>
+                                                <p className="text-xs uppercase tracking-wide font-semibold text-[#8a5f3a]">Registered</p>
+                                                <p className="mt-1">{event.registrationList?.length ?? 0} attendee{(event.registrationList?.length ?? 0) !== 1 ? "s" : ""}</p>
                                             </div>
                                         </div>
 
@@ -244,7 +300,8 @@ export default function RegisteredEventsListClient({ registeredEvents, currentUs
                                         </button>
                                     </div>
                                 </div>
-                            ))}
+                                );
+                            })}
                         </div>
 
                         {/* Pagination */}
@@ -305,6 +362,25 @@ export default function RegisteredEventsListClient({ registeredEvents, currentUs
                                     </p>
                                 </div>
 
+                                {/* Badges */}
+                                <div className="flex flex-wrap gap-2">
+                                    {selectedEvent.category && (
+                                        <span className="inline-flex items-center rounded-full bg-[#e05c5c]/15 px-3 py-1 text-xs font-semibold capitalize text-[#a33b3b]">
+                                            {selectedEvent.category}
+                                        </span>
+                                    )}
+                                    <span className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold ${
+                                        selectedEvent.isFree !== false ? "bg-green-100 text-green-700" : "bg-amber-100 text-amber-700"
+                                    }`}>
+                                        {selectedEvent.isFree !== false ? "Free" : `$${Number(selectedEvent.price).toFixed(2)}`}
+                                    </span>
+                                    <span className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold ${
+                                        selectedEvent.visibility === "private" ? "bg-slate-200 text-slate-600" : "bg-blue-100 text-blue-700"
+                                    }`}>
+                                        {selectedEvent.visibility === "private" ? "🔒 Private" : "🌐 Public"}
+                                    </span>
+                                </div>
+
                                 {/* Event Details Grid */}
                                 <div className="grid grid-cols-2 gap-4 border-t border-[#d4b18b]/40 pt-4">
                                     <div>
@@ -315,9 +391,17 @@ export default function RegisteredEventsListClient({ registeredEvents, currentUs
                                         <p className="text-xs uppercase tracking-wide font-semibold text-[#8a5f3a]">Time</p>
                                         <p className="mt-1 text-slate-700">{formatTime(selectedEvent.date)}</p>
                                     </div>
-                                    <div className="col-span-2">
+                                    <div>
                                         <p className="text-xs uppercase tracking-wide font-semibold text-[#8a5f3a]">Location</p>
                                         <p className="mt-1 text-slate-700">{selectedEvent.location || "TBD"}</p>
+                                    </div>
+                                    <div>
+                                        <p className="text-xs uppercase tracking-wide font-semibold text-[#8a5f3a]">Attendees</p>
+                                        <p className="mt-1 text-slate-700">{selectedEvent.registrationList?.length ?? 0} registered</p>
+                                    </div>
+                                    <div className="col-span-2">
+                                        <p className="text-xs uppercase tracking-wide font-semibold text-[#8a5f3a]">Created</p>
+                                        <p className="mt-1 text-slate-700">{formatDate(selectedEvent.createdAt)}</p>
                                     </div>
                                 </div>
 

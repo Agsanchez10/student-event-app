@@ -102,7 +102,7 @@ export default function RegisterClient() {
 
 
     return (
-        <div className="min-h-[75vh] flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-950 dark:to-slate-900 px-4">
+        <div className="min-h-[75vh] flex items-center justify-center  from-slate-50 to-slate-100 dark:from-slate-950 dark:to-slate-900 px-4">
             <div className="w-full max-w-md rounded-3xl bg-white p-8 shadow-lg ring-1 ring-slate-200 dark:bg-slate-900 dark:ring-slate-700">
                 <h1 className="text-3xl font-semibold text-slate-950 dark:text-white">Create Account</h1>
                 <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">

@@ -1,5 +1,6 @@
 import { cookies } from "next/headers";
 import jwt from "jsonwebtoken";
+import { redirect } from "next/navigation";
 import { withDB } from "@/lib/mongodb";
 import User from "@/models/User";
 import Club from "@/models/Club";
@@ -33,31 +34,11 @@ export default async function ClubsManagementPage() {
         ...JSON.parse(JSON.stringify(rawUser))
     } : null;
 
-    if (!user) {
-        return (
-            <div className="min-h-screen bg-slate-50 py-16 dark:bg-slate-950">
-                <main className="mx-auto w-full max-w-4xl rounded-3xl border border-slate-200 bg-white p-10 shadow-sm dark:border-slate-800 dark:bg-slate-900">
-                    <h1 className="text-3xl font-semibold text-slate-950 dark:text-white">Club Management</h1>
-                    <p className="mt-4 text-slate-600 dark:text-slate-300">Please sign in to access club management.</p>
-                </main>
-            </div>
-        );
-    }
+    if (!user) redirect("/login");
 
-    const isAdmin = user.role === "Admin";
+    const isAdmin = user.role === "CollegeAdmin";
 
-    if (!isAdmin) {
-        return (
-            <div className="min-h-screen bg-slate-50 py-16 dark:bg-slate-950">
-                <main className="mx-auto w-full max-w-4xl rounded-3xl border border-slate-200 bg-white p-10 shadow-sm dark:border-slate-800 dark:bg-slate-900">
-                    <h1 className="text-3xl font-semibold text-slate-950 dark:text-white">Access Denied</h1>
-                    <p className="mt-4 text-slate-600 dark:text-slate-300">
-                        You do not have permission to access this page. Only College Admins can manage clubs.
-                    </p>
-                </main>
-            </div>
-        );
-    }
+    if (!isAdmin) redirect("/dashboard");
 
     const clubs = await getAllClubs();
     const pendingCharters = await getPendingCharters();

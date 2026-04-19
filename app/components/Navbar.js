@@ -44,18 +44,16 @@ export default function Navbar() {
       setShowLogin(false);
       
       if(data.requiresOTP === true) {
-        router.push("/new-password");
+        window.location.href = "/new-password";
         return;
       }
 
       if(data.user?.role === "SystemAdmin") {
-        router.push("/system-admin");
+        window.location.href = "/system-admin";
         return;
       }
 
-      
-  
-       router.push("/dashboard");
+      window.location.href = "/dashboard";
 
     } catch (error) {
       console.error("Login error:", error);
@@ -72,7 +70,7 @@ export default function Navbar() {
       const res = await fetch("/api/auth/logout", { method: "POST" });
       if (res.ok) {
         setIsLoggedIn(false);
-        router.push("/");
+        window.location.href = "/";
       } else {
         console.error("Logout failed");
       }

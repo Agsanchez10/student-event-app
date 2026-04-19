@@ -4,6 +4,9 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { modifyFlag } from "@/app/actions/flagActions";
 import { deactivateUserAccount } from "@/app/actions/userActions";
+import { removeEvent } from "@/app/actions/eventActions";
+import { removeClub } from "@/app/actions/clubActions";
+import { removeAnnouncement } from "@/app/actions/announcementActions";
 
 export default function FlaggedContentClient({ initialFlags }) {
     const [flags, setFlags] = useState(initialFlags || []);
@@ -69,29 +72,30 @@ export default function FlaggedContentClient({ initialFlags }) {
 
         setIsRemoving(true);
         try {
-            const endpoint = selectedFlag.type === "announcement" 
-                ? `/api/clubs/announcements/${selectedFlag.contentId}`
-                : selectedFlag.type === "event"
-                ? `/api/events/${selectedFlag.contentId}`
-                : selectedFlag.type === "club"
-                ? `/api/clubs/${selectedFlag.contentId}`
-                : null;
+            let result;
 
-            if (!endpoint) {
-                alert("Cannot delete this content type");
+            if (selectedFlag.type === "event") {
+                result = await removeEvent(selectedFlag.contentId);
+            } else if (selectedFlag.type === "club") {
+                result = await removeClub(selectedFlag.contentId);
+            } else if (selectedFlag.type === "announcement") {
+                if (!selectedFlag.contentClubId) {
+                    alert("Cannot remove announcement: club reference not found.");
+                    setIsRemoving(false);
+                    return;
+                }
+                result = await removeAnnouncement(selectedFlag.contentId, selectedFlag.contentClubId);
+            } else {
+                alert("Cannot delete this content type.");
                 setIsRemoving(false);
                 return;
             }
 
-            const response = await fetch(endpoint, {
-                method: "DELETE",
-            });
-
-            if (response.ok) {
+            if (result.success) {
                 await markAsResolved("content_removed");
                 alert("Content removed successfully!");
             } else {
-                alert("Failed to remove content");
+                alert("Failed to remove content: " + (result.error || "Unknown error"));
             }
         } catch (error) {
             console.error("Error removing content:", error);
@@ -103,16 +107,23 @@ export default function FlaggedContentClient({ initialFlags }) {
 
     const handleSuspendUser = async () => {
         if (!selectedFlag) return;
+
+        const targetUserId = selectedFlag.contentOwnerId;
+        if (!targetUserId) {
+            alert("Unable to identify the user to suspend for this content type.");
+            return;
+        }
+
         if (!confirm("Are you sure you want to suspend this user?")) return;
 
         setIsSuspending(true);
         try {
-            const result = await deactivateUserAccount(selectedFlag.flaggedById);
+            const result = await deactivateUserAccount(targetUserId);
             if (result.success) {
                 await markAsResolved("user_suspended");
                 alert("User suspended successfully!");
             } else {
-                alert("Failed to suspend user");
+                alert("Failed to suspend user: " + (result.error || "Unknown error"));
             }
         } catch (error) {
             console.error("Error suspending user:", error);
@@ -157,8 +168,11 @@ export default function FlaggedContentClient({ initialFlags }) {
             <div className="mx-auto flex min-h-full w-full max-w-6xl flex-col px-6 py-10 sm:px-8 lg:px-12">
                 {/* Header */}
                 <div className="mb-8 flex items-center justify-between">
-                    <Link href="/dashboard/admin" className="text-sm font-semibold text-[#e05c5c] hover:text-[#c94a4a]">
-                        ← Back to Admin
+                    <Link
+                        href="/dashboard"
+                        className="inline-flex items-center justify-center rounded-3xl border border-[#d4b18b] bg-[#fff5e4] px-6 py-3 text-sm font-semibold text-slate-900 transition hover:border-[#c1a06e] hover:bg-[#f8e7ce] whitespace-nowrap"
+                    >
+                        ← Back to Dashboard
                     </Link>
                 </div>
 

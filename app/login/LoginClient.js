@@ -31,6 +31,7 @@ export default function LoginClient() {
             return;
             }
                         
+           
             router.push("/dashboard");
 
             console.log("Login successful:", data);

@@ -19,7 +19,8 @@ const getCurrentUser = withDB(async (token) => {
 export default async function PendingChartersPage() {
     const cookieStore = await cookies();
     const token = cookieStore.get("token")?.value;
-    const user = await getCurrentUser(token);
+    const rawUser = await getCurrentUser(token);
+    const user = rawUser ? JSON.parse(JSON.stringify(rawUser)) : null;
     const charters = await getPendingChartersForAdmin();
 
     return <PendingChartersClient charters={charters} currentUser={user} />;

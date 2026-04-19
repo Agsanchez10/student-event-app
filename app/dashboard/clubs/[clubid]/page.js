@@ -26,8 +26,8 @@ const getClubAnnouncements = withDB(async (clubID) => {
     return announcements;
 });
 
-const getClubEvents = withDB(async (clubName) => {
-    const events = await Event.find({ club: clubName })
+const getClubEvents = withDB(async (clubId) => {
+    const events = await Event.find({ clubId: Number(clubId) })
         .sort({ date: 1 })
         .lean();
     return events;
@@ -67,15 +67,13 @@ export default async function ClubOwnerManagement({ params }) {
     const club = JSON.parse(JSON.stringify(clubInfo));
 
     // Check if user is admin of this club
-    const isAdmin =
-        String(club.admin) === String(user._id) ||
-        String(club.ownerID) === String(user._id);
+    const isAdmin = String(club.ownerID) === String(user._id); 
 
     // Check if user is a member of this club
     const isMember = user.clubMemberships && user.clubMemberships.includes(clubId);
 
     // Allow access if user is admin or member
-    if (!isAdmin && !isMember) {
+    if (user.role !== "CollegeAdmin" && !isMember && !isAdmin) {
         return (
             <div className="min-h-screen bg-slate-50 py-16 dark:bg-slate-950">
                 <main className="mx-auto w-full max-w-4xl rounded-3xl border border-slate-200 bg-white p-10 shadow-sm dark:border-slate-800 dark:bg-slate-900">
@@ -89,13 +87,14 @@ export default async function ClubOwnerManagement({ params }) {
     }
 
     const announcements = await getClubAnnouncements(clubId);
-    const events = await getClubEvents(club.name);
+    const events = await getClubEvents(clubId);
     const membershipApplications = await getMembershipApplications(clubId);
 
     return (
         <ClubDashboardClient
             club={club}
             currentUserId={user._id}
+            userRole={user.role}
             isAdmin={isAdmin}
             isMember={isMember}
             announcements={announcements}

@@ -14,10 +14,10 @@ export default function Home() {
               </div>
               <div className="space-y-4">
                 <h1 className="text-4xl font-semibold tracking-tight text-slate-950 sm:text-5xl">
-                  Campus events and clubs pinned just for you.
+                  Campus life, all in one spot.
                 </h1>
                 <p className="max-w-xl text-base leading-8 text-slate-700 sm:text-lg">
-                  Browse, join, and manage student activities in a friendly bulletin-board style experience with your logo’s warm tones.
+                  Jump into events, link up with clubs, and make your college experience truly yours.
                 </p>
               </div>
 
@@ -35,10 +35,9 @@ export default function Home() {
               <article className="relative rounded-[1.8rem] border border-[#d4b18b]/40 bg-[#fff5e4] p-6 shadow-lg shadow-[#b08f6c]/10 before:absolute before:left-6 before:-top-3 before:h-3 before:w-14 before:rounded-b-xl before:bg-[#e05c5c]/15 before:shadow-sm before:shadow-[#c74848]/10">
                 <p className="text-sm uppercase tracking-[0.2em] text-[#8a5f3a]">Pinned note</p>
                 <h2 className="mt-4 text-2xl font-semibold text-slate-950">What you can do</h2>
-                <ul className="mt-4 space-y-3 text-slate-700">
-                  <li>• Explore upcoming events and club meetings.</li>
-                  <li>• Join student groups and manage memberships.</li>
-                  <li>• Keep your event schedule organized.</li>
+                <ul className="mt-4 space-y-3 text-slate-700">                  
+                  <li>• Join student clubs or create your own.</li>
+                  <li>• Explore upcoming events and club meetings.</li>                  
                 </ul>
               </article>
               <div className="grid gap-4 sm:grid-cols-2">
@@ -54,6 +53,60 @@ export default function Home() {
             </div>
           </div>
         </section>
+      {/* Test Login Info */}
+      <section className="mt-8 rounded-[2rem] border border-[#d4b18b]/40 bg-[#f9f2e4] p-8 shadow-[0_25px_65px_-30px_rgba(15,23,42,0.75)] sm:p-10">
+        <div className="mb-6 flex items-center gap-3">
+          <div className="inline-flex items-center gap-3 rounded-full bg-[#e05c5c]/15 px-4 py-1 text-sm font-semibold uppercase tracking-[0.24em] text-[#a33b3b] shadow-sm shadow-[#e05c5c]/10">
+            Testing Info
+          </div>
+          <p className="text-sm text-slate-600">For professor / demo use only</p>
+        </div>
+        <p className="mb-6 text-sm text-slate-700">
+          All accounts share the same password: <code className="rounded bg-[#e8d7bb] px-2 py-0.5 font-mono font-semibold text-slate-900">password123</code>
+        </p>
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {/* System Admin */}
+          <div className="rounded-[1.8rem] border border-[#d4b18b]/40 bg-[#fff5e4] p-5 space-y-3">
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#a33b3b]">System Admin</p>
+            <ul className="space-y-2 text-sm text-slate-700">
+              <li>
+                <span className="block font-semibold text-slate-900">System Admin</span>
+                <span className="font-mono text-xs">system.admin@bullepin.xyz</span>
+              </li>              
+            </ul>
+          </div>
+          {/* College Admin */}
+          <div className="rounded-[1.8rem] border border-[#d4b18b]/40 bg-[#fff5e4] p-5 space-y-3">
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#a33b3b]">College Admin</p>
+            <ul className="space-y-2 text-sm text-slate-700">
+              <li>
+                <span className="block font-semibold text-slate-900">College Admin</span>
+                <span className="font-mono text-xs">college.admin@bullepin.xyz</span>
+              </li>
+            </ul>
+          </div>
+          {/* Club Owner */}
+          <div className="rounded-[1.8rem] border border-[#d4b18b]/40 bg-[#fff5e4] p-5 space-y-3">
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#a33b3b]">Club Owner</p>
+            <ul className="space-y-2 text-sm text-slate-700">
+              <li>
+                <span className="block font-semibold text-slate-900">Club Owner</span>
+                <span className="font-mono text-xs">club.owner@bullepin.xyz</span>
+              </li>
+            </ul>
+          </div>
+          {/* Student */}
+          <div className="rounded-[1.8rem] border border-[#d4b18b]/40 bg-[#fff5e4] p-5 space-y-3">
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#a33b3b]">Student</p>
+            <ul className="space-y-2 text-sm text-slate-700">
+              <li>
+                <span className="block font-semibold text-slate-900">Student Account</span>
+                <span className="font-mono text-xs">student@bullepin.xyz</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </section>
       </div>
     </main>
   );

@@ -111,10 +111,10 @@ export default function ClubFinderClient({
                             <p className="mt-2 text-slate-700">Explore and join clubs that interest you</p>
                         </div>
                         <Link
-                            href="/dashboard/student"
-                            className="text-sm font-semibold text-[#e05c5c] hover:text-[#c94a4a] transition"
+                            href="/dashboard"
+                            className="inline-flex items-center justify-center rounded-3xl border border-[#d4b18b] bg-[#fff5e4] px-6 py-3 text-sm font-semibold text-slate-900 transition hover:border-[#c1a06e] hover:bg-[#f8e7ce] whitespace-nowrap"
                         >
-                            ← Back
+                            ← Back to dashboard
                         </Link>
                     </div>
 

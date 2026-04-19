@@ -1,20 +1,18 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useRouter } from "next/navigation";
 
-export default function Sidebar({ isOpen, onToggle }) {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [userRole, setUserRole] = useState(null);
+export default function Sidebar({ isOpen, onToggle, userRole }) {
   const router = useRouter();
   const pathname = usePathname();
   
   const allLinks = [
     { href: "/dashboard", label: "Dashboard", icon: "🏠", roles: ["Student", "CollegeAdmin", "ClubOwner"] },
     { href: "/dashboard/events", label: "Events", icon: "📅", roles: ["Student"] },
-    { href: "/dashboard/clubs", label: "Clubs", icon: "👥", roles: ["Student", "ClubOwner"] },
+    { href: "/dashboard/clubs", label: "Clubs", icon: "👥", roles: ["Student"] },
     { href: "/dashboard/club-charter", label: "Club Charter", icon: "📝", roles: ["Student"] },
     { href: "/dashboard/pending-charters", label: "Pending Charters", icon: "⏳", roles: ["Student", "CollegeAdmin"] },
     { href: "/system-admin", label: "Dashboard", icon: "🏠", roles: ["SystemAdmin"] },
@@ -23,40 +21,20 @@ export default function Sidebar({ isOpen, onToggle }) {
     { href: "/system-admin/account-security", label: "Account Security", icon: "🔒", roles: ["SystemAdmin"] },
   ];
 
-  useEffect(() => {
-    // Fetch user role
-    const fetchUserRole = async () => {
-      try {
-        const res = await fetch("/api/auth/check", { method: "GET" });
-        if (res.ok) {
-          setIsLoggedIn(true);
-          // Get user data from cookie or session
-          const userRes = await fetch("/api/users/current", { method: "GET" });
-          if (userRes.ok) {
-            const userData = await userRes.json();
-            setUserRole(userData.role);
-          }
-        } else {
-          setIsLoggedIn(false);
-        }
-      } catch (error) {
-        console.error("Error fetching user role:", error);
-      }
-    };
-
-    fetchUserRole();
-  }, []);
-
-  const filteredLinks = allLinks.filter(link => 
-    !userRole || link.roles.includes(userRole)
+  const filteredLinks = allLinks.filter(link =>
+    userRole && link.roles.includes(userRole)
   );
+
+  // Don't render sidebar if no role (not logged in)
+  if (!userRole) {
+    return null;
+  }
 
   const handleLogout = async () => {
     try {
       const res = await fetch("/api/auth/logout", { method: "POST" });
       if (res.ok) {
-        setIsLoggedIn(false);
-        router.push("/");
+        window.location.href = "/";
       } else {
         console.error("Logout failed");
       }
@@ -70,7 +48,7 @@ export default function Sidebar({ isOpen, onToggle }) {
       {!isOpen && (
         <button
           onClick={onToggle}
-          className="fixed left-4 top-4 z-30 rounded-full bg-[#e12b53] p-3 text-white shadow-lg transition hover:bg-[#c11b3d] "
+          className="fixed left-4 top-[116px] z-30  bg-[#e12b53] p-4 text-white shadow-lg transition hover:bg-[#c11b3d] "
         >
           ☰
         </button>
